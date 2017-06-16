@@ -9,7 +9,8 @@ namespace com.VR_Robotica.Avatars
 {
 	public class Avatar_FocusController : MonoBehaviour
 	{
-		public GameObject	FocusController;
+		[HideInInspector]
+		public GameObject	Controller;
 
 		private Vector3		_start;
 		private Vector3		_target;
@@ -25,12 +26,6 @@ namespace com.VR_Robotica.Avatars
 			StartCoroutine(moving());
 		}
 
-		private void create()
-		{
-			FocusController = new GameObject();
-			FocusController.name = "Object Of Focus";
-		}
-
 		/// <summary>
 		/// Move the FocusController gameObject to this Target Transform 
 		/// POSITION at this rate of SPEED.
@@ -39,18 +34,36 @@ namespace com.VR_Robotica.Avatars
 		/// <param name="speed"></param>
 		public void moveTo(Vector3 target, float speed)
 		{
-			_start	= FocusController.transform.position;
+			_start = Controller.transform.position;
 			_target = target;
-			_speed	= speed;
+			_speed = speed;
 		}
 
 		private IEnumerator moving()
 		{
 			while (true)
 			{
-				FocusController.transform.position = Vector3.Lerp(_start, _target, Time.deltaTime * _speed);
+				Controller.transform.position = Vector3.Lerp(_start, _target, Time.deltaTime * _speed);
 				yield return null;
 			}
+		}
+
+		private void create()
+		{
+			Controller = new GameObject();
+			Controller.name = "Object Of Focus";
+			// make sure it does not interfere with any ray casting
+			// Layer[2] = Ignore Raycast
+			Controller.layer = 2;
+
+			Controller.AddComponent<Rigidbody>();
+			Controller.GetComponent<Rigidbody>().useGravity = false;
+			Controller.GetComponent<Rigidbody>().mass = 0.0f;
+
+			//add collider
+			Controller.AddComponent<SphereCollider>();
+			Controller.GetComponent<SphereCollider>().radius = 0.01f;
+			Controller.GetComponent<SphereCollider>().isTrigger = true;
 		}
 	}
 }
