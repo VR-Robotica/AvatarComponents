@@ -9,11 +9,20 @@ namespace com.VR_Robotica.Avatars
 {
 	public class Avatar_FocusController : MonoBehaviour
 	{
-		public GameObject FocusController;
+		public GameObject	FocusController;
+
+		private Vector3		_start;
+		private Vector3		_target;
+		private float		_speed;
 
 		private void Start()
 		{ 
 			create();
+
+			// Initialize first position...
+			moveTo(new Vector3(0, 0, 10), 10.0f);
+
+			StartCoroutine(moving());
 		}
 
 		private void create()
@@ -23,23 +32,23 @@ namespace com.VR_Robotica.Avatars
 		}
 
 		/// <summary>
-		/// Move the FocusController gameObject to this TARGET Transform 
-		/// Position at this rate of SPEED.
+		/// Move the FocusController gameObject to this Target Transform 
+		/// POSITION at this rate of SPEED.
 		/// </summary>
 		/// <param name="target"></param>
 		/// <param name="speed"></param>
-		public void moveTo(Transform target, float speed)
+		public void moveTo(Vector3 target, float speed)
 		{
-			StartCoroutine(moving(target, speed));
+			_start	= FocusController.transform.position;
+			_target = target;
+			_speed	= speed;
 		}
 
-		private IEnumerator moving(Transform target, float speed)
+		private IEnumerator moving()
 		{
-			Vector3 startPos = FocusController.transform.position;
-
 			while (true)
 			{
-				FocusController.transform.position = Vector3.Lerp(startPos, target.position, Time.deltaTime * speed);
+				FocusController.transform.position = Vector3.Lerp(_start, _target, Time.deltaTime * _speed);
 				yield return null;
 			}
 		}
