@@ -7,11 +7,11 @@
 
 namespace com.VR_Robotica.Avatars
 {
-	public class Avatar_FrustumCollision : MonoBehaviour
+	public class Controller_Frustum : MonoBehaviour
 	{
 		[Tooltip("You can place script here, or it will be discovered if left null")]
 		// create reference to Control Script to change list values
-		public Avatar_FocusOfInterest ParentScript;
+		public Controller_Interest ParentScript;
 		[Tooltip("These will be set by the parent script")]
 		public string[] FocusOfInterestObjectTags;
 
@@ -26,7 +26,7 @@ namespace com.VR_Robotica.Avatars
 		{
 			if (ParentScript == null)
 			{
-				ParentScript = GameObject.Find("Avatar").GetComponent<Avatar_FocusOfInterest>();
+				ParentScript = GameObject.Find("Avatar").GetComponent<Controller_Interest>();
 
 				if(ParentScript == null)
 				{
@@ -37,7 +37,7 @@ namespace com.VR_Robotica.Avatars
 		
 		void OnTriggerEnter(Collider col)
 		{
-			if(col.gameObject.GetComponent<Avatar_ObjectOfInterest>() != null)
+			if(col.gameObject.GetComponent<Object_Interest>() != null)
 			{
 
 			}

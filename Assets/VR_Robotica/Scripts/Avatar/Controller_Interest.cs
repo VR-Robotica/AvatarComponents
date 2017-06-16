@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace com.VR_Robotica.Avatars
 {
-	public class Avatar_FocusOfInterest : MonoBehaviour
+	public class Controller_Interest : MonoBehaviour
 	{
 		public Collider		PlayerFrustum;
 		public Vector3		FrustumScale;
@@ -26,7 +26,7 @@ namespace com.VR_Robotica.Avatars
 		public float FocusOnFaceDistance = 1.0f;
 
 		// script reference
-		private Avatar_EyeGaze _eyeGaze;
+		private Manager_EyeGaze _eyeGaze;
 
 		// for microsaccade
 		private GameObject	_lastObjectLookedAt;
@@ -87,7 +87,7 @@ namespace com.VR_Robotica.Avatars
 			frustumReference.GetComponent<Rigidbody>().mass = 0.0f;
 
 			// add collision triggering script
-			frustumReference.AddComponent<Avatar_FrustumCollision>();
+			frustumReference.AddComponent<Controller_Frustum>();
 
 			// get reference to collider for trigger events
 			PlayerFrustum = frustumReference.GetComponent<Collider>();

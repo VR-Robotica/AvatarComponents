@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 namespace com.VR_Robotica.Avatars
 {
-	public class Avatar_FocusController : MonoBehaviour
+	public class Controller_Focus : MonoBehaviour
 	{
 		[HideInInspector]
 		public GameObject	Controller;

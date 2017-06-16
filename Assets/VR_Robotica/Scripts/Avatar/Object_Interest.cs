@@ -7,7 +7,7 @@ namespace com.VR_Robotica.Avatars
 	/// <summary>
 	/// Used to Identify Objects that an Avatar can look at.
 	/// </summary>
-	public class Avatar_ObjectOfInterest : MonoBehaviour
+	public class Object_Interest : MonoBehaviour
 	{
 		/// <summary>
 		/// Define Specific Areas of an object that an avatar can cycle
