@@ -71,8 +71,9 @@ namespace com.VR_Robotica.Avatar
 			// distance is also = to the magnitude of the vector we just created
 			// *calculating square root functions like magnitude are CPU heavy
 			float distance = heading.magnitude; 
+			
 			// now we normalize the direction
-			Vector3 direction = heading / distance;
+			// Vector3 direction = heading / distance;
 
 			//Vector3 normalizedVectorBetween = Vector3.Normalize(triangleCenter - HeadJoint.position);
 			//Vector3 adjustedCenter = HeadJoint.position + ( ArmMassInfluence * direction);

@@ -1,69 +1,100 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-
-/// <summary>
-/// This is a simple gameObject that the avatar's eyes will be oriented to.
-/// </summary>
 namespace com.VR_Robotica.Avatars
 {
 	public class Controller_Focus : MonoBehaviour
 	{
 		[HideInInspector]
-		public GameObject	Controller;
+		public GameObject	controller;
 
-		private Vector3		_start;
-		private Vector3		_target;
+		private Vector3		_startPosition;
+		private Vector3		_targetPosition;
 		private float		_speed;
-
-		private void Start()
-		{ 
-			create();
-
-			// Initialize first position...
-			moveTo(new Vector3(0, 0, 10), 10.0f);
-
-			StartCoroutine(moving());
-		}
+		public bool			_isReady;
 
 		/// <summary>
-		/// Move the FocusController gameObject to this Target Transform 
+		/// the _controller object will follow the Target's Transform 
 		/// POSITION at this rate of SPEED.
 		/// </summary>
 		/// <param name="target"></param>
 		/// <param name="speed"></param>
 		public void moveTo(Vector3 target, float speed)
 		{
-			_start = Controller.transform.position;
-			_target = target;
-			_speed = speed;
+			_startPosition	= controller.transform.position;
+			_targetPosition	= target;
+			_speed			= speed;
 		}
 
-		private IEnumerator moving()
+		public IEnumerator Create()
 		{
-			while (true)
-			{
-				Controller.transform.position = Vector3.Lerp(_start, _target, Time.deltaTime * _speed);
-				yield return null;
-			}
+			create();
+			Start_Moving();
+			yield return null;
 		}
 
 		private void create()
 		{
-			Controller = new GameObject();
-			Controller.name = "Object Of Focus";
-			// make sure it does not interfere with any ray casting
-			// Layer[2] = Ignore Raycast
-			Controller.layer = 2;
+			if (!_isReady)
+			{
+				controller = new GameObject();
+				controller.name = "Focus Controller";
+				controller.transform.parent = this.transform;
+				// make sure it does not interfere with any ray casting
+				// Layer[2] = Ignore Raycast
+				controller.layer = 2;
 
-			Controller.AddComponent<Rigidbody>();
-			Controller.GetComponent<Rigidbody>().useGravity = false;
-			Controller.GetComponent<Rigidbody>().mass = 0.0f;
+				controller.AddComponent<Rigidbody>();
+				controller.GetComponent<Rigidbody>().useGravity = false;
+				controller.GetComponent<Rigidbody>().mass = 0.0f;
 
-			//add collider
-			Controller.AddComponent<SphereCollider>();
-			Controller.GetComponent<SphereCollider>().radius = 0.01f;
-			Controller.GetComponent<SphereCollider>().isTrigger = true;
+				//add collider
+				controller.AddComponent<SphereCollider>();
+				controller.GetComponent<SphereCollider>().radius = 0.01f;
+				controller.GetComponent<SphereCollider>().isTrigger = true;
+
+				GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+				sphere.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+				Destroy(sphere.gameObject.GetComponent<SphereCollider>());
+				sphere.transform.parent = controller.transform;
+
+				// add object script
+				// _controller.AddComponent<Object_OfFocus>();
+				_isReady = true;
+			}
+			else
+			{
+				Debug.LogWarning("Only one focus controller object can be created.");
+			}
 		}
+
+		#region COROUTINE - Moving
+		public void Start_Moving()
+		{
+			Stop_Moving();
+			container = moving();
+			StartCoroutine(container);
+		}
+
+		public void Stop_Moving()
+		{
+			if(container != null)
+			{
+				StopCoroutine(container);
+				container = null;
+			}
+		}
+
+		private IEnumerator container;
+		private IEnumerator moving()
+		{
+			while (true)
+			{
+				controller.transform.position =	Vector3.Lerp(_startPosition, _targetPosition, Time.deltaTime * _speed );
+				yield return null;
+			}
+		}
+		#endregion
 	}
 }
