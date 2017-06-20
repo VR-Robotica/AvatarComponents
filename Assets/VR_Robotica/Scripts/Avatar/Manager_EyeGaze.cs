@@ -11,8 +11,10 @@ namespace com.VR_Robotica.Avatars
 {
 	public class Manager_EyeGaze : MonoBehaviour
 	{
-		public GameObject LeftEye;
-		public GameObject RightEye;
+		public GameObject LeftEyePivot;
+		public GameObject RightEyePivot;
+		[HideInInspector]
+		public Vector3 CenterOfEyes;
 
 		// Controls the interest lists of the avatar's potential gaze
 		private Controller_Interest _interestController;
@@ -20,7 +22,7 @@ namespace com.VR_Robotica.Avatars
 		// the object the avatar's eyes are fixated on
 		private Controller_Focus _focusController;
 
-		public bool _isReady;
+		private bool _isReady;
 
 		// Use this for initialization
 		void Start()
@@ -55,12 +57,12 @@ namespace com.VR_Robotica.Avatars
 		private void moveEyes()
 		{
 			// eyes follow the control object
-			LeftEye.transform.LookAt(_focusController.controller.transform);
-			RightEye.transform.LookAt(_focusController.controller.transform);
+			LeftEyePivot.transform.LookAt(_focusController.controller.transform);
+			RightEyePivot.transform.LookAt(_focusController.controller.transform);
 
 			// Draw lines from eyes to target
-			Debug.DrawLine(LeftEye.transform.position, _focusController.controller.transform.position, Color.red);
-			Debug.DrawLine(RightEye.transform.position, _focusController.controller.transform.position, Color.red);
+			Debug.DrawLine(LeftEyePivot.transform.position, _focusController.controller.transform.position, Color.red);
+			Debug.DrawLine(RightEyePivot.transform.position, _focusController.controller.transform.position, Color.red);
 		}
 
 		#region SETUP
@@ -79,10 +81,13 @@ namespace com.VR_Robotica.Avatars
 
 		private void getAvatarEyes()
 		{
-			if (LeftEye == null || RightEye == null)
+			if (LeftEyePivot == null || RightEyePivot == null)
 			{
 				Debug.LogWarning("You need to define the Eyes in the Inspector");
+				return;
 			}
+
+			CenterOfEyes = LeftEyePivot.transform.position + (RightEyePivot.transform.position - LeftEyePivot.transform.position) / 2;
 		}
 
 		private void createFocusController()

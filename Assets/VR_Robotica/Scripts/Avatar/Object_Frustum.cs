@@ -15,7 +15,9 @@ namespace com.VR_Robotica.Avatars
 		[Space]
 		public bool ShowDebugLog;
 
-		private void Awake()
+		private bool _isReady;
+
+		private void Start()
 		{
 			getReferences();
 		}
@@ -24,53 +26,64 @@ namespace com.VR_Robotica.Avatars
 		{
 			if (InterestController == null)
 			{
+				Debug.Log("Frustum: interest Controller Not Set, finding Avatar");
 				InterestController = GameObject.Find("Avatar").GetComponent<Controller_Interest>();
 
 				if (InterestController == null)
 				{
 					Debug.LogWarning("Controller_Interest Script Not Found!");
+					return;
 				}
 			}
+
+			_isReady = true;
 		}
 
 		void OnTriggerEnter(Collider col)
 		{
-			Object_OfInterest ooi = col.gameObject.GetComponent<Object_OfInterest>();
-
-			if ( ooi != null)
+			if (_isReady)
 			{
-				Debug.Log(col.name + " is an object of interest.");
+				if (col.gameObject != InterestController.gameObject)
+				{
+					Object_OfInterest ooi = col.gameObject.GetComponent<Object_OfInterest>();
 
-				// add game object to primary list
-				InterestController.ObjectsOfInterest.Add(col.gameObject);
-				// interupt cycle
-				InterestController.InteruptCycles(col.gameObject);
+					if (ooi != null)
+					{
+						//Debug.Log(col.name + " is an object of interest.");
+						// add game object to primary list
+						InterestController.ObjectsOfInterest.Add(col.gameObject);
+						// interupt cycle
+						InterestController.InteruptCycles(col.gameObject);
+					}
+				}
 			}
 		}
 
 		void OnTriggerExit(Collider col)
 		{
-			// Remove Exited Object from the Objects Of Interest List in the Parent Script
-			Object_OfInterest ooi = col.gameObject.GetComponent<Object_OfInterest>();
-
-			if (ooi != null)
+			if (_isReady)
 			{
-				// remove game object from primary list
-				InterestController.ObjectsOfInterest.Remove(col.gameObject);
+				// Remove Exited Object from the Objects Of Interest List in the Parent Script
+				Object_OfInterest ooi = col.gameObject.GetComponent<Object_OfInterest>();
 
-				// remove points from secondary list
-				if (ooi.PointsOfInterest.Length > 0)
+				if (ooi != null)
 				{
-					for (int i = 0; i < ooi.PointsOfInterest.Length; i++)
+					// remove game object from primary list
+					InterestController.ObjectsOfInterest.Remove(col.gameObject);
+
+					// remove points from secondary list
+					if (ooi.PointsOfInterest.Length > 0)
 					{
-						InterestController.PointsOfInterest.Remove(ooi.PointsOfInterest[i].gameObject);
+						for (int i = 0; i < ooi.PointsOfInterest.Length; i++)
+						{
+							InterestController.PointsOfInterest.Remove(ooi.PointsOfInterest[i].gameObject);
+						}
 					}
 				}
+
+				// dependancy on InterestController
+				InterestController.ChangeFocus();
 			}
-
-			// dependancy on InterestController
-			InterestController.ChangeFocus();
-
 		}
 	}
 }

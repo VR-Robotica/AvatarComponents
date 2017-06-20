@@ -12,7 +12,7 @@ namespace com.VR_Robotica.Avatars
 		private Vector3		_startPosition;
 		private Vector3		_targetPosition;
 		private float		_speed;
-		public bool			_isReady;
+		private bool		_isReady;
 
 		/// <summary>
 		/// the _controller object will follow the Target's Transform 

@@ -19,25 +19,24 @@ namespace com.VR_Robotica.Avatars
 	{
 		public bool				ShowDebugLog;
 		[Space]
-		public string			PathToFrustumPrefab	= "Prefabs/Frustum";
-		public Vector3			FrustumScale		= new Vector3(75, 50, 100);
-		[Space]
 		[Header("Objects Available To Look At")]
-		public List<GameObject> ObjectsOfInterest;	// Primary
+		public List<GameObject> ObjectsOfInterest;  // Primary
+		[Space]
+		public GameObject CurrentObject;
+		[Space]
 		public List<GameObject> PointsOfInterest;   // Secondary
 		[Space]
-		[Header("Current Focus")]
-		public GameObject		CurrentObject;
 		public GameObject		CurrentlyLookingAtThis;
+
+		[HideInInspector]
+		public string PathToFrustumPrefab = "Prefabs/Frustum";
+		[HideInInspector]
+		public Vector3 FrustumScale = new Vector3(75, 50, 100);
 
 		// script reference
 		private Manager_EyeGaze _eyeGaze;
 		private Vector3			_centerOfEyes;
-		private GameObject		_lastObjectLookedAt;
-		private float		_holdFocus;
-		private float		_holdMicrosaccade;
-		private Vector3		_microsaccadeOffset;
-		private bool		_isHoldingMicrosaccade;
+		private GameObject		_frustum;
 
 		private void Awake()
 		{
@@ -49,9 +48,10 @@ namespace com.VR_Robotica.Avatars
 
 		private void Start()
 		{
-			createFrustum();
-			findCenterOfEyes();
+			_centerOfEyes = new Vector3(0, _eyeGaze.LeftEyePivot.transform.position.y, 0.1f);
 
+			createFrustum();
+			setupFrustum();
 			Start_CycleFocus();
 		}
 
@@ -59,72 +59,37 @@ namespace com.VR_Robotica.Avatars
 		{
 			trimInactiveObjects();
 		}
-	
-		private void createFrustum()
+
+		private void trimInactiveObjects()
 		{
-			loadFrustumPrefab();
-			// TODO: dynamically build the frustum geometry
-		}
-
-		private void loadFrustumPrefab()
-		{
-			// check if frustum was added as a child in the editor
-			GameObject frustumReference = GameObject.Find("Frustum");
-			if ( frustumReference == null)
-			{
-				// if a frustum has NOT been added...
-				// instantiate prefab from resource folder
-				frustumReference = Instantiate(Resources.Load(PathToFrustumPrefab) as GameObject);
-				
-				// if the load failed...
-				if (frustumReference == null)
-				{
-					Debug.LogWarning("Frustum NOT Loaded.");
-					return;
-				}
-			}
-			else
-			{
-				Debug.Log("Frustum was added in the Editor");
-			}
-
-			frustumReference.name = "Frustum";
-			// Set to Layer[2] = Ignore Ray Cast
-			frustumReference.layer = 2; 
-			frustumReference.transform.parent = this.transform;
-			
-			// Align and Scale Frustum
-			frustumReference.transform.localPosition = new Vector3(0, _eyeGaze.LeftEye.transform.position.y, 0.1f);
-			frustumReference.transform.localScale = FrustumScale;
-
-			frustumReference.AddComponent<Rigidbody>();
-			frustumReference.GetComponent<Rigidbody>().useGravity = false;
-			frustumReference.GetComponent<Rigidbody>().mass = 0.0f;
-
-			// Add collision triggering script
-			if (frustumReference.GetComponent<Object_Frustum>() == null)
-			{
-				Debug.Log("Adding Frustum Controller");
-				frustumReference.AddComponent<Object_Frustum>();
-			}
-		}
-
-		private void findCenterOfEyes()
-		{
-			// startPos is midpoint between eyes to simulate line of sight
-			_centerOfEyes = _eyeGaze.LeftEye.transform.position + (_eyeGaze.RightEye.transform.position - _eyeGaze.LeftEye.transform.position) / 2;
-			//_centerOfEyes = new Vector3(0.0f, 0.9f, 0.1f);
+			ObjectsOfInterest.RemoveAll(elem => !elem.activeInHierarchy);
+			PointsOfInterest.RemoveAll(elem => !elem.activeInHierarchy);
 		}
 
 		public void ChangeFocus()
 		{
-			CurrentlyLookingAtThis = pickObjectFromList();
+			GameObject newPick = pickObjectFromList();
+			if(newPick == CurrentObject)
+			{
+				newPick = pickObjectFromList();
+			}
+
+			CurrentObject = newPick;
+
+			// handle the the focus change event...
+			if (_focusHasChanged)
+			{
+				// when focus has changed...
+				// checks for points of interests on the object
+				resetPointsOfInterest();
+			}
 		}
 
 		private GameObject pickObjectFromList()
 		{
 			if (ShowDebugLog) { Debug.Log("Controller_Interest: Picking Object From List"); }
-			if (ObjectsOfInterest != null && ObjectsOfInterest.Count > 1)
+
+			if (ObjectsOfInterest != null && ObjectsOfInterest.Count > 0)
 			{
 				int randomNumber = UnityEngine.Random.Range(0, ObjectsOfInterest.Count);
 
@@ -139,8 +104,8 @@ namespace com.VR_Robotica.Avatars
 				else
 				{
 					// line of sight is obstructed, continue looking at current/previous object
-					if (ShowDebugLog) { Debug.Log("Defaulting to previous object of interest: " + CurrentlyLookingAtThis.name); }
-					return CurrentlyLookingAtThis;
+					if (ShowDebugLog) { Debug.Log("Defaulting to previous object of interest: " + CurrentObject.name); }
+					return CurrentObject;
 				}
 			}
 			else
@@ -174,17 +139,13 @@ namespace com.VR_Robotica.Avatars
 			}
 		}
 
-		private void trimInactiveObjects()
-		{
-			ObjectsOfInterest.RemoveAll(elem => !elem.activeInHierarchy);
-			PointsOfInterest.RemoveAll(elem => !elem.activeInHierarchy);
-		}
+		
 
-#region COROUTINE HANDLERS
+		#region COROUTINE HANDLERS
 
 		#region EVENT - Focus Change
 		private bool _focusHasChanged;
-		private void onObjectFocusChange()
+		private void resetPointsOfInterest()
 		{
 			if (ShowDebugLog) { Debug.Log("Object Focus Changed"); }
 
@@ -193,7 +154,7 @@ namespace com.VR_Robotica.Avatars
 			// clear list
 			PointsOfInterest = new List<GameObject>();
 			// get list reference from new object
-			Object_OfInterest ooi = CurrentlyLookingAtThis.GetComponent<Object_OfInterest>();
+			Object_OfInterest ooi = CurrentObject.GetComponent<Object_OfInterest>();
 			// add values to list from object refference
 			if (ooi != null && ooi.PointsOfInterest.Length > 0)
 			{
@@ -238,13 +199,6 @@ namespace com.VR_Robotica.Avatars
 				if (ObjectsOfInterest.Count > 0)
 				{
 					ChangeFocus();
-
-					// handle the the focus change event...
-					if (_focusHasChanged)
-					{
-						onObjectFocusChange();
-						// checks if there are points of interests on the object
-					}
 				}
 				else
 				{
@@ -293,7 +247,7 @@ namespace com.VR_Robotica.Avatars
 						if (randomNumber > (i * percentage) && randomNumber < ((i + 1) * percentage))
 						{
 							CurrentlyLookingAtThis = PointsOfInterest[i];
-							yield return new WaitForSeconds(UnityEngine.Random.Range(3.0f, 8.0f));
+							yield return new WaitForSeconds(UnityEngine.Random.Range(2.0f, 5.0f));
 						}
 					}
 				}
@@ -316,13 +270,80 @@ namespace com.VR_Robotica.Avatars
 				Stop_CycleFocus(); 
 				Stop_PointsCycle();
 				// now look at the new object
-				CurrentlyLookingAtThis = newObject;
+				CurrentObject = newObject;
+				resetPointsOfInterest();
 				// and restart the basic cycle again
 				Start_CycleFocus();
 			}
 		}
 		#endregion
 
-#endregion
+		#endregion
+
+		#region CREATE FRUSTUM
+		private void createFrustum()
+		{
+			loadFrustumPrefab();
+			// TODO: dynamically build the frustum geometry
+		}
+
+		private void loadFrustumPrefab()
+		{
+			// check if frustum was added as a child in the editor
+			if (this.transform.childCount > 0)
+			{
+				// get child object(s) with the Object_Frustum component (should only be one)
+				Object_Frustum[] children = this.transform.GetComponentsInChildren<Object_Frustum>();
+				foreach (Object_Frustum frustum in children)
+				{
+					_frustum = frustum.gameObject;
+				}
+			}
+
+			if (_frustum == null)
+			{
+				// if a frustum has NOT been added...
+				// instantiate prefab from resource folder
+				_frustum = Instantiate(Resources.Load(PathToFrustumPrefab) as GameObject);
+
+				// if the load failed...
+				if (_frustum == null)
+				{
+					Debug.LogWarning("Frustum NOT Loaded.");
+					return;
+				}
+			}
+		}
+
+		private void setupFrustum()
+		{
+			if (_frustum != null)
+			{
+				_frustum.name = "Frustum";
+				// Set to Layer[2] = Ignore Ray Cast
+				_frustum.layer = 2;
+				_frustum.transform.parent = this.transform;
+
+				// Align and Scale Frustum
+				_frustum.transform.position = _centerOfEyes;
+				_frustum.transform.localScale = FrustumScale;
+
+				_frustum.AddComponent<Rigidbody>();
+				_frustum.GetComponent<Rigidbody>().useGravity = false;
+				_frustum.GetComponent<Rigidbody>().mass = 0.0f;
+
+				// Add collision triggering script
+				Object_Frustum of = _frustum.GetComponent<Object_Frustum>();
+				if (of == null)
+				{
+					Debug.Log("Adding Frustum Controller");
+					of = _frustum.AddComponent<Object_Frustum>();
+				}
+
+				// setting reference
+				of.InterestController = this.gameObject.GetComponent<Controller_Interest>();
+			}
+		}
+		#endregion
 	}
 }

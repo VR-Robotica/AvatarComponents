@@ -23,10 +23,6 @@ namespace com.VR_Robotica.Avatars
 			createPointOfInterest();
 		}
 
-		private void Start()
-		{
-		}
-
 		private void createCollider()
 		{
 			Collider collider = this.gameObject.GetComponent<Collider>();
