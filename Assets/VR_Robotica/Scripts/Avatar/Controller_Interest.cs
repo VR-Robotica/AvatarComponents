@@ -32,11 +32,14 @@ namespace com.VR_Robotica.Avatars
 		public string PathToFrustumPrefab = "Prefabs/Frustum";
 		[HideInInspector]
 		public Vector3 FrustumScale = new Vector3(75, 50, 100);
+		[HideInInspector]
+		public bool focusHasChanged;
 
 		// script reference
 		private Manager_EyeGaze _eyeGaze;
 		private Vector3			_centerOfEyes;
 		private GameObject		_frustum;
+		
 
 		private void Awake()
 		{
@@ -77,12 +80,18 @@ namespace com.VR_Robotica.Avatars
 			CurrentObject = newPick;
 
 			// handle the the focus change event...
-			if (_focusHasChanged)
+			if (focusHasChanged)
 			{
 				// when focus has changed...
 				// checks for points of interests on the object
 				resetPointsOfInterest();
 			}
+
+			// TODO: maybe loop until the pick is different
+			// while(!focusHasChanged)
+			// {
+			//		newPick = pickObjectFromList();
+			// }
 		}
 
 		private GameObject pickObjectFromList()
@@ -96,7 +105,7 @@ namespace com.VR_Robotica.Avatars
 				// Visibility Check
 				if (checkLineOfSight(ObjectsOfInterest[randomNumber]))
 				{
-					_focusHasChanged = true;
+					focusHasChanged = true;
 					CurrentObject = ObjectsOfInterest[randomNumber];
 					// Line of sight is clear, pass the new object
 					return ObjectsOfInterest[randomNumber];
@@ -144,7 +153,6 @@ namespace com.VR_Robotica.Avatars
 		#region COROUTINE HANDLERS
 
 		#region EVENT - Focus Change
-		private bool _focusHasChanged;
 		private void resetPointsOfInterest()
 		{
 			if (ShowDebugLog) { Debug.Log("Object Focus Changed"); }
@@ -166,7 +174,7 @@ namespace com.VR_Robotica.Avatars
 			// start coroutine again
 			Start_PointsCycle();
 			// finish off the event
-			_focusHasChanged = false;
+			focusHasChanged = false;
 		}
 		#endregion
 		

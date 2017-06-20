@@ -22,12 +22,15 @@ namespace com.VR_Robotica.Avatars
 		// the object the avatar's eyes are fixated on
 		private Controller_Focus _focusController;
 
+		private Controller_EyeBlink _eyeBlink;
+
 		private bool _isReady;
 
 		// Use this for initialization
 		void Start()
 		{
 			StartCoroutine(setup());
+			StartCoroutine(triggerBlink());
 		}
 
 		// Update is called once per frame
@@ -65,11 +68,36 @@ namespace com.VR_Robotica.Avatars
 			Debug.DrawLine(RightEyePivot.transform.position, _focusController.controller.transform.position, Color.red);
 		}
 
+		// if rotation of eyes changes enough, trigger eye blink
+		private float _currentRotationValue;
+		private float _previousRotationValue;
+		private IEnumerator triggerBlink()
+		{
+			if (_eyeBlink != null)
+			{
+				while (true)
+				{
+					_currentRotationValue = LeftEyePivot.transform.localEulerAngles.y;
+
+					if (Mathf.Abs(_currentRotationValue - _previousRotationValue) > 0.5f)
+					{
+						StartCoroutine(_eyeBlink.SingleBlink());
+					}
+
+					yield return new WaitForEndOfFrame();
+
+					_previousRotationValue = _currentRotationValue;
+				}
+			}
+
+			yield return null;
+		}
+
 		#region SETUP
 		private IEnumerator setup()
 		{
 			getAvatarEyes();
-
+			_eyeBlink = this.gameObject.GetComponent<Controller_EyeBlink>();
 			createFocusController();
 			createInterestController();
 
