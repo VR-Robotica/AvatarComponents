@@ -5,8 +5,9 @@ using UnityEngine;
 namespace com.VR_Robotica.Avatars
 {
 	/// <summary>
-	/// Attach this script to any object to Identify it as something
-	/// the Avatar is interested in looking at.
+	/// Attach this script to any object to Identify it as something the Avatar is 
+	/// interested in looking at. A designer can specify which points on the object 
+	/// are of interest by adding them to the PointsOfInterest Array in the editor.
 	/// </summary>
 	public class Object_OfInterest : MonoBehaviour
 	{

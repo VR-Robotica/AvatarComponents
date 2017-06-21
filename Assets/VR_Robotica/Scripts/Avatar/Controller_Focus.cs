@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace com.VR_Robotica.Avatars
 {
+	/// <summary>
+	/// This creates the Focus Point that the Avatar's Eyes will converge upon. It has one 
+	/// controlling function that moves it from one position to another.
+	/// </summary>
 	public class Controller_Focus : MonoBehaviour
 	{
 		[HideInInspector]

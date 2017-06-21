@@ -3,13 +3,14 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// This randomly cycles through a list of potential objects the avatar 
-/// will attempt to look at. If an object has a 'focusPoint' (or a bunch
-/// of focusPoints), it will look at those, otherwise it will look at
-/// the pivotPoint.
+/// This randomly cycles through a list of potential objects and their points of interest, 
+/// that the avatar will attempt to look at. (see Object_OfInterest)
+/// 
+/// It uses two coroutines: one to cycle through objects, and the second to cycle through an
+/// object's points of interest (in case there are more than one)
 /// 
 /// This will also create a visual frustum collision area that will add or remove objects
-/// from the list as they enter or exit the frustum area (see FrustumCollision script).
+/// from the list as they enter or exit the frustum area (see Object_Frustum script).
 /// </summary>
 
 namespace com.VR_Robotica.Avatars

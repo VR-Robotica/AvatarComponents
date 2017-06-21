@@ -3,6 +3,8 @@
 /// <summary>
 /// This script simply adds and removes potential ObjectsOfInterest from the FocusOfInterest Script
 /// when objects enter or exit the collision area of the Frustum Collider Geometry
+/// 
+/// This is currently dependent on the Controller_Interest script.
 /// </summary>
 
 namespace com.VR_Robotica.Avatars

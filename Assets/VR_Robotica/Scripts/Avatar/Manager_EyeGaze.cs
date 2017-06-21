@@ -5,7 +5,9 @@ using UnityEngine;
 
 /// <summary>
 /// WIP - WORK IN PROGRESS v0.1
-/// 
+/// This Manages all the basic elements for simualting the Eye Gaze for your Avatar or NPC.
+/// It will create all the controllers and their corresponding control objects automatically,
+/// and will gaze at objects that have the Object_OfInterest Component.
 /// </summary>
 namespace com.VR_Robotica.Avatars
 {

@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace com.VR_Robotica.Avatars
 {
+	/// <summary>
+	/// This animates random Eye Blinking through coroutines.
+	/// 3D: finds the skin mesh renderer and animates the blendshapes denoted in the editor.
+	/// 2D: Coming Soon 
+	/// </summary>
 	public class Controller_EyeBlink : MonoBehaviour
 	{
 		public GameObject MeshWithEyeLidShapes;
