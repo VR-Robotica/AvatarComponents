@@ -41,14 +41,14 @@ namespace com.VR_Robotica.Avatars
 					if (randomNumber < 8.2f)
 					{
 						// 82% Chance of SINGLE BLINK
-						StartCoroutine(SingleBlink());
+						yield return SingleBlink();
 					}
 					else
 					{
 						// 18% Chance of DOUBLE BLINK
-						StartCoroutine(SingleBlink());
+						yield return SingleBlink();
 						yield return new WaitForSeconds(0.25f);
-						StartCoroutine(SingleBlink());
+						yield return SingleBlink();
 					}
 				}
 

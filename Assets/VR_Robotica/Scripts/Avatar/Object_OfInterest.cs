@@ -11,6 +11,8 @@ namespace com.VR_Robotica.Avatars
 	/// </summary>
 	public class Object_OfInterest : MonoBehaviour
 	{
+		[Tooltip("Toggle AUTOMATICALLY populate PointsOfInterest with all the children of this object")]
+		public bool UseAllChildren;
 		[Tooltip("Define Specific Areas of an object that an avatar can cycle through and look at.")]
 		public Transform[] PointsOfInterest;
 
@@ -21,7 +23,7 @@ namespace com.VR_Robotica.Avatars
 		private void Awake()
 		{
 			createCollider();
-			createPointOfInterest();
+			createPointsOfInterest();
 		}
 
 		private void createCollider()
@@ -35,14 +37,32 @@ namespace com.VR_Robotica.Avatars
 			}
 		}
 
-		private void createPointOfInterest()
+		private void createPointsOfInterest()
 		{
-			// In case no points of interests are added to the object
-			// through the inspector, default to the object's pivot point.
+			// If there are no points of interests manually added in the inspector...
 			if (PointsOfInterest == null || PointsOfInterest.Length == 0)
 			{
-				PointsOfInterest = new Transform[1];
-				PointsOfInterest[0] = this.transform;
+				// check the boolean toggle to automatically populate with the children
+				if (UseAllChildren)
+				{
+					PointsOfInterest = new Transform[this.transform.childCount];
+					for (int i = 0; i < PointsOfInterest.Length; i++)
+					{
+						PointsOfInterest[i] = this.transform.GetChild(i);
+					}
+
+					if(PointsOfInterest.Length == 0)
+					{
+						Debug.LogWarning(this.gameObject.name + ": ERROR : No Children were found.");
+						return;
+					}
+				}
+				else
+				{
+					// or default to using the object's pivot point
+					PointsOfInterest = new Transform[1];
+					PointsOfInterest[0] = this.transform;
+				}
 			}
 		}
 	}

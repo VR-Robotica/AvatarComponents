@@ -13,6 +13,7 @@ namespace com.VR_Robotica.Avatars
 {
 	public class Manager_EyeGaze : MonoBehaviour
 	{
+		public Transform ForwardReferencePoint;
 		public GameObject[] Eyes;
 		public float[] XRotationInOut = { -45.0f, 45.0f };
 		public float[] YRotationUpDown = { -30.0f, 50.0f };
@@ -22,11 +23,21 @@ namespace com.VR_Robotica.Avatars
 		private Controller_Interest _interestController;
 
 		// the object the avatar's eyes are fixated on
-		private Controller_Focus _focusController;
+		private Controller_Focus	_focusControllerScript;
+		private Transform			_focusControlTransform;
 
 		private Controller_EyeBlink _eyeBlink;
 
 		private bool _isReady;
+
+		private void Awake()
+		{
+			if(ForwardReferencePoint == null)
+			{
+				Debug.LogError("Forward Reference Point needs to be set");
+				return;
+			}
+		}
 
 		// Use this for initialization
 		void Start()
@@ -40,37 +51,39 @@ namespace com.VR_Robotica.Avatars
 		{
 			if(_isReady)
 			{
-				Vector3 targetPosition;
-				// taking input from interest controller... 
-				if (_interestController.CurrentlyLookingAtThis != null)
-				{
-					targetPosition = _interestController.CurrentlyLookingAtThis.transform.position;
-				}
-				else
-				{
-					// gaze off in the distance
-					targetPosition = new Vector3(	_focusController.transform.localPosition.x,
-													_focusController.transform.localPosition.y,
-													_focusController.transform.localPosition.z + 10.0f
-												);
-				}
-
-				// ...pass to focus controller
-				_focusController.moveTo(targetPosition, 10.0f);
-
-				moveEyes();
+				update_TargetPosition();
+				update_EyeRotations();
 			}
 		}
 
-		private void moveEyes()
+		private void update_TargetPosition()
+		{
+			Vector3 targetPosition;
+			// taking input from interest controller... 
+			// check if there is a current target from Control_Interest Script
+			if (_interestController.CurrentlyLookingAt != null)
+			{
+				targetPosition = _interestController.CurrentlyLookingAt.transform.position;
+			}
+			else
+			{
+				// if there is NO target, gaze off into the distance...
+				targetPosition = ForwardReferencePoint.forward;
+			}
+
+			// ...pass the target position to Control_Focus script
+			_focusControllerScript.moveTo(targetPosition, 5.0f);
+		}
+
+		private void update_EyeRotations()
 		{
 			for (int i = 0; i < Eyes.Length; i++)
 			{
-				Eyes[i].transform.LookAt(_focusController.controller.transform);
+				Eyes[i].transform.LookAt(_focusControlTransform);
 
 				LimitRotations();
-
-				Debug.DrawLine(Eyes[i].transform.position, _focusController.controller.transform.position, Color.red);
+				Debug.DrawRay(ForwardReferencePoint.position, ForwardReferencePoint.forward, Color.blue);
+				Debug.DrawLine(Eyes[i].transform.position, _focusControlTransform.position, Color.red);
 			}
 		}
 
@@ -88,11 +101,11 @@ namespace com.VR_Robotica.Avatars
 			{
 				while (true)
 				{
-					_currentRotationValue = Eyes[0].transform.localEulerAngles.y;
+					_currentRotationValue = Eyes[0].transform.localEulerAngles.x;
 
-					if (Mathf.Abs(_currentRotationValue - _previousRotationValue) > 0.5f)
+					if (Mathf.Abs(_currentRotationValue - _previousRotationValue) > 5.0f)
 					{
-						StartCoroutine(_eyeBlink.SingleBlink());
+						yield return _eyeBlink.SingleBlink();
 					}
 
 					yield return new WaitForEndOfFrame();
@@ -113,8 +126,10 @@ namespace com.VR_Robotica.Avatars
 			createInterestController();
 
 			// wait for the focus controller to finish
-			yield return _focusController.Create();
-			
+			yield return _focusControllerScript.Create();
+			// get reference to focus control object
+			_focusControlTransform = _focusControllerScript.controller.transform;
+
 			_isReady = true;
 		}
 
@@ -129,7 +144,7 @@ namespace com.VR_Robotica.Avatars
 
 		private void createFocusController()
 		{
-			_focusController = this.gameObject.AddComponent<Controller_Focus>();
+			_focusControllerScript = this.gameObject.AddComponent<Controller_Focus>();
 		}
 
 		private void createInterestController()

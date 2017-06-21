@@ -27,7 +27,7 @@ namespace com.VR_Robotica.Avatars
 		[Space]
 		public List<GameObject> PointsOfInterest;   // Secondary
 		[Space]
-		public GameObject		CurrentlyLookingAtThis;
+		public GameObject		CurrentlyLookingAt;
 
 		[HideInInspector]
 		public string PathToFrustumPrefab = "Prefabs/Frustum";
@@ -235,14 +235,14 @@ namespace com.VR_Robotica.Avatars
 					{
 						if (randomNumber > (i * percentage) && randomNumber < ((i + 1) * percentage))
 						{
-							CurrentlyLookingAtThis = PointsOfInterest[i];
+							CurrentlyLookingAt = PointsOfInterest[i];
 							yield return new WaitForSeconds(UnityEngine.Random.Range(2.0f, 5.0f));
 						}
 					}
 				}
 				else
 				{
-					CurrentlyLookingAtThis = null;
+					CurrentlyLookingAt = null;
 					yield return null;
 				}
 			}

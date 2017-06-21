@@ -61,29 +61,32 @@ namespace com.VR_Robotica.Avatars
 			}
 		}
 
+		/// <summary>
+		/// Remove Exited Object from the Objects Of Interest List in the Controller_Interest script
+		/// If the exited object was being looked at, refresh the focus (clear points of interest and
+		/// the currently looked at objects)
+		/// </summary>
+		/// <param name="col"></param>
 		void OnTriggerExit(Collider col)
 		{
 			if (_isReady)
 			{
-				// Remove Exited Object from the Objects Of Interest List in the Parent Script
+				
 				Object_OfInterest ooi = col.gameObject.GetComponent<Object_OfInterest>();
 
 				if (ooi != null)
 				{
-					// remove game object from primary list
+					// check if the object exiting is the current object being looked at
+					// if so, clear everything...
 					if (ooi.gameObject == InterestController.CurrentObject)
 					{
-						InterestController.CurrentObject = null;
+						InterestController.PointsOfInterest.Clear();
+						InterestController.CurrentlyLookingAt	= null;
+						InterestController.CurrentObject		= null;
 					}
-
+					// remove object from list
 					InterestController.ObjectsOfInterest.Remove(col.gameObject);
-					InterestController.PointsOfInterest.Clear();
-					//InterestController.ChangeFocus();
-					InterestController.CurrentlyLookingAtThis = null;
 				}
-
-				// dependancy on InterestController
-				//InterestController.ChangeFocus();
 			}
 		}
 	}
