@@ -22,7 +22,7 @@ namespace com.VR_Robotica.Avatars
 		/// <param name="speed"></param>
 		public void moveTo(Vector3 target, float speed)
 		{
-			_startPosition	= controller.transform.position;
+			_startPosition	= controller.transform.localPosition;
 			_targetPosition	= target;
 			_speed			= speed;
 		}
@@ -91,7 +91,7 @@ namespace com.VR_Robotica.Avatars
 		{
 			while (true)
 			{
-				controller.transform.position =	Vector3.Lerp(_startPosition, _targetPosition, Time.deltaTime * _speed );
+				controller.transform.localPosition =	Vector3.Lerp(_startPosition, _targetPosition, Time.deltaTime * _speed );
 				yield return null;
 			}
 		}

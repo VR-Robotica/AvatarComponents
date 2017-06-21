@@ -69,20 +69,19 @@ namespace com.VR_Robotica.Avatars
 				if (ooi != null)
 				{
 					// remove game object from primary list
-					InterestController.ObjectsOfInterest.Remove(col.gameObject);
-
-					// remove points from secondary list
-					if (ooi.PointsOfInterest.Length > 0)
+					if (ooi.gameObject == InterestController.CurrentObject)
 					{
-						for (int i = 0; i < ooi.PointsOfInterest.Length; i++)
-						{
-							InterestController.PointsOfInterest.Remove(ooi.PointsOfInterest[i].gameObject);
-						}
+						InterestController.CurrentObject = null;
 					}
+
+					InterestController.ObjectsOfInterest.Remove(col.gameObject);
+					InterestController.PointsOfInterest.Clear();
+					//InterestController.ChangeFocus();
+					InterestController.CurrentlyLookingAtThis = null;
 				}
 
 				// dependancy on InterestController
-				InterestController.ChangeFocus();
+				//InterestController.ChangeFocus();
 			}
 		}
 	}

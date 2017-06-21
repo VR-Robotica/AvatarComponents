@@ -37,7 +37,7 @@ namespace com.VR_Robotica.Avatars
 
 		// script reference
 		private Manager_EyeGaze _eyeGaze;
-		private Vector3			_centerOfEyes;
+		private Vector3			_eyeHeight;
 		private GameObject		_frustum;
 		
 
@@ -47,12 +47,11 @@ namespace com.VR_Robotica.Avatars
 			PointsOfInterest	= new List<GameObject>();
 
 			_eyeGaze			= this.gameObject.GetComponent<Manager_EyeGaze>();
+			_eyeHeight			= new Vector3(0, _eyeGaze.Eyes[0].transform.position.y, 0.1f);
 		}
 
 		private void Start()
 		{
-			_centerOfEyes = new Vector3(0, _eyeGaze.LeftEyePivot.transform.position.y, 0.1f);
-
 			createFrustum();
 			setupFrustum();
 			Start_CycleFocus();
@@ -71,27 +70,8 @@ namespace com.VR_Robotica.Avatars
 
 		public void ChangeFocus()
 		{
-			GameObject newPick = pickObjectFromList();
-			if(newPick == CurrentObject)
-			{
-				newPick = pickObjectFromList();
-			}
-
-			CurrentObject = newPick;
-
-			// handle the the focus change event...
-			if (focusHasChanged)
-			{
-				// when focus has changed...
-				// checks for points of interests on the object
-				resetPointsOfInterest();
-			}
-
-			// TODO: maybe loop until the pick is different
-			// while(!focusHasChanged)
-			// {
-			//		newPick = pickObjectFromList();
-			// }
+			CurrentObject = pickObjectFromList();
+			resetPointsOfInterest();
 		}
 
 		private GameObject pickObjectFromList()
@@ -125,7 +105,7 @@ namespace com.VR_Robotica.Avatars
 
 		private bool checkLineOfSight(GameObject target)
 		{
-			Ray ray				= new Ray(_centerOfEyes, target.transform.position - _centerOfEyes);
+			Ray ray				= new Ray(_eyeHeight, target.transform.position - _eyeHeight);
 			RaycastHit hit		= new RaycastHit();
 
 			if (Physics.Raycast(ray, out hit, 100))
@@ -272,6 +252,7 @@ namespace com.VR_Robotica.Avatars
 		// externally trigger a temporary interuption of the avatar's focus
 		public void InteruptCycles(GameObject newObject)
 		{
+			Debug.Log("Interupting Cycle");
 			if (newObject != null)
 			{
 				// interupt the cycle by stopping them
@@ -333,7 +314,7 @@ namespace com.VR_Robotica.Avatars
 				_frustum.transform.parent = this.transform;
 
 				// Align and Scale Frustum
-				_frustum.transform.position = _centerOfEyes;
+				_frustum.transform.position = _eyeHeight;
 				_frustum.transform.localScale = FrustumScale;
 
 				_frustum.AddComponent<Rigidbody>();

@@ -11,10 +11,10 @@ namespace com.VR_Robotica.Avatars
 {
 	public class Manager_EyeGaze : MonoBehaviour
 	{
-		public GameObject LeftEyePivot;
-		public GameObject RightEyePivot;
-		[HideInInspector]
-		public Vector3 CenterOfEyes;
+		public GameObject[] Eyes;
+		public float[] XRotationInOut = { -45.0f, 45.0f };
+		public float[] YRotationUpDown = { -30.0f, 50.0f };
+		public float[] ZRotationMinMax = {  90.0f, 90.0f };
 
 		// Controls the interest lists of the avatar's potential gaze
 		private Controller_Interest _interestController;
@@ -47,7 +47,10 @@ namespace com.VR_Robotica.Avatars
 				else
 				{
 					// gaze off in the distance
-					targetPosition = new Vector3(0, 0, 10);
+					targetPosition = new Vector3(	_focusController.transform.localPosition.x,
+													_focusController.transform.localPosition.y,
+													_focusController.transform.localPosition.z + 10.0f
+												);
 				}
 
 				// ...pass to focus controller
@@ -59,13 +62,19 @@ namespace com.VR_Robotica.Avatars
 
 		private void moveEyes()
 		{
-			// eyes follow the control object
-			LeftEyePivot.transform.LookAt(_focusController.controller.transform);
-			RightEyePivot.transform.LookAt(_focusController.controller.transform);
+			for (int i = 0; i < Eyes.Length; i++)
+			{
+				Eyes[i].transform.LookAt(_focusController.controller.transform);
 
-			// Draw lines from eyes to target
-			Debug.DrawLine(LeftEyePivot.transform.position, _focusController.controller.transform.position, Color.red);
-			Debug.DrawLine(RightEyePivot.transform.position, _focusController.controller.transform.position, Color.red);
+				LimitRotations();
+
+				Debug.DrawLine(Eyes[i].transform.position, _focusController.controller.transform.position, Color.red);
+			}
+		}
+
+		private void LimitRotations()
+		{
+
 		}
 
 		// if rotation of eyes changes enough, trigger eye blink
@@ -77,7 +86,7 @@ namespace com.VR_Robotica.Avatars
 			{
 				while (true)
 				{
-					_currentRotationValue = LeftEyePivot.transform.localEulerAngles.y;
+					_currentRotationValue = Eyes[0].transform.localEulerAngles.y;
 
 					if (Mathf.Abs(_currentRotationValue - _previousRotationValue) > 0.5f)
 					{
@@ -109,13 +118,11 @@ namespace com.VR_Robotica.Avatars
 
 		private void getAvatarEyes()
 		{
-			if (LeftEyePivot == null || RightEyePivot == null)
+			if (Eyes == null || Eyes.Length == 0)
 			{
 				Debug.LogWarning("You need to define the Eyes in the Inspector");
 				return;
 			}
-
-			CenterOfEyes = LeftEyePivot.transform.position + (RightEyePivot.transform.position - LeftEyePivot.transform.position) / 2;
 		}
 
 		private void createFocusController()
