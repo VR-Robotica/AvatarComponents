@@ -23,6 +23,7 @@ Obj/
 UnityGenerated/
 Library/
 Assets/AssetStoreTools*
+Assets/Test/
 
 # Visual Studio / MonoDevelop
 ExportedObj/
@@ -64,3 +65,4 @@ ExportedObj/
 Network Trash Folder
 Temporary Items
 .apdisk
+Assets/Tests/
