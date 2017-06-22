@@ -13,16 +13,8 @@ namespace com.VR_Robotica.Avatars
 {
 	public class Manager_EyeGaze : MonoBehaviour
 	{
-		public Transform ForwardReferencePoint;
+		public Transform FacingForwardReference;
 		public Transform[] Eyes;
-		
-		/* Since eyes don't follow objects that exit the frustum, the frustum itself
-		 * is a better limiter for the eye rotation
-		 * 
-		public float[] XRotationInOut = { -45.0f, 45.0f };
-		public float[] YRotationUpDown = { -30.0f, 50.0f };
-		public float[] ZRotationMinMax = {  90.0f, 90.0f };
-		*/
 
 		// Controls the interest lists of the avatar's potential gaze
 		private Controller_Interest _interestController;
@@ -37,7 +29,7 @@ namespace com.VR_Robotica.Avatars
 
 		private void Awake()
 		{
-			if(ForwardReferencePoint == null)
+			if(FacingForwardReference == null)
 			{
 				Debug.LogError("Forward Reference Point needs to be set");
 				return;
@@ -74,7 +66,11 @@ namespace com.VR_Robotica.Avatars
 			}
 			else
 			{
-				_focusControllerScript.GotoDefaultPosition();
+				// use a default position
+				targetPosition = FacingForwardReference.TransformPoint(new Vector3(0, 0, 10));
+				_focusControllerScript.moveTo(targetPosition, 5.0f);
+
+				//_focusControllerScript.GotoDefaultPosition();
 			}
 		}
 
@@ -84,15 +80,9 @@ namespace com.VR_Robotica.Avatars
 			{
 				Eyes[i].LookAt(_focusControlTransform);
 
-				LimitRotations();
-				Debug.DrawRay(ForwardReferencePoint.position, ForwardReferencePoint.forward, Color.blue);
+				Debug.DrawRay(FacingForwardReference.position, FacingForwardReference.forward, Color.blue);
 				Debug.DrawLine(Eyes[i].position, _focusControlTransform.position, Color.red);
 			}
-		}
-
-		private void LimitRotations()
-		{
-
 		}
 
 		// if rotation of eyes changes enough, trigger eye blink

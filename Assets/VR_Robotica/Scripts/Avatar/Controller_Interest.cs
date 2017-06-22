@@ -315,7 +315,7 @@ namespace com.VR_Robotica.Avatars
 				_frustum.name = "Frustum";
 				// Set to Layer[2] = Ignore Ray Cast
 				_frustum.layer = 2;
-				_frustum.transform.parent = this.transform;
+				_frustum.transform.parent = _eyeGaze.FacingForwardReference;
 
 				// Align and Scale Frustum
 				_frustum.transform.position = _eyeHeight;

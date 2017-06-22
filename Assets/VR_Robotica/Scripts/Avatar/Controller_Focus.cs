@@ -12,6 +12,7 @@ namespace com.VR_Robotica.Avatars
 	{
 		[HideInInspector]
 		public GameObject	controller;
+		public Vector3		DefaultPosition;
 
 		private Vector3		_startPosition;
 		private Vector3		_targetPosition;
@@ -40,9 +41,7 @@ namespace com.VR_Robotica.Avatars
 
 		public void GotoDefaultPosition()
 		{
-			// Controller needs to move in LOCAL SPACE
-			Vector3 defaultPosition = controller.transform.TransformPoint(new Vector3(0, 0, 10));
-			moveTo(defaultPosition, 5.0f);
+			moveTo(DefaultPosition, 5.0f);
 		}
 
 		private void create()
