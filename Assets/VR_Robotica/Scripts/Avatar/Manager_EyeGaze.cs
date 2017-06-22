@@ -104,7 +104,7 @@ namespace com.VR_Robotica.Avatars
 				{
 					_currentRotationValue = Eyes[0].localEulerAngles.x;
 
-					if (Mathf.Abs(_currentRotationValue - _previousRotationValue) > 20.0f)
+					if (Mathf.Abs(_currentRotationValue - _previousRotationValue) > 50.0f)
 					{
 						yield return _eyeBlink.SingleBlink();
 					}

@@ -52,8 +52,8 @@ namespace com.VR_Robotica.Avatars
 					}
 				}
 
-				//Activate blink again in a random range of 2 to 15 seconds for a *natural* look
-				yield return new WaitForSeconds(Random.Range(2.0f, 15.0f));
+				//Activate blink again in a random range of 5 to 15 seconds for a *natural* look
+				yield return new WaitForSeconds(Random.Range(5.0f, 15.0f));
 			}
 		}
 
