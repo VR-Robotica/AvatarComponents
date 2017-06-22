@@ -20,15 +20,15 @@ namespace com.VR_Robotica.Avatars
 
 		/// <summary>
 		/// the _controller object will follow the Target's Transform 
-		/// POSITION at this rate of SPEED.
+		/// POSITION at this rate of SPEED. Controller moves in WORLD SPACE
 		/// </summary>
 		/// <param name="target"></param>
 		/// <param name="speed"></param>
 		public void moveTo(Vector3 target, float speed)
 		{
-			_startPosition	= controller.transform.position;
-			_targetPosition	= target;
-			_speed			= speed;
+			_startPosition = controller.transform.position;
+			_targetPosition = target;
+			_speed = speed;
 		}
 
 		public IEnumerator Create()
@@ -36,6 +36,13 @@ namespace com.VR_Robotica.Avatars
 			create();
 			Start_Moving();
 			yield return null;
+		}
+
+		public void GotoDefaultPosition()
+		{
+			// Controller needs to move in LOCAL SPACE
+			Vector3 defaultPosition = controller.transform.TransformPoint(new Vector3(0, 0, 10));
+			moveTo(defaultPosition, 5.0f);
 		}
 
 		private void create()
@@ -95,7 +102,7 @@ namespace com.VR_Robotica.Avatars
 		{
 			while (true)
 			{
-				controller.transform.position =	Vector3.Lerp(_startPosition, _targetPosition, Time.deltaTime * _speed );
+				controller.transform.position = Vector3.Lerp(_startPosition, _targetPosition, Time.deltaTime * _speed);
 				yield return null;
 			}
 		}

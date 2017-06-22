@@ -33,8 +33,6 @@ namespace com.VR_Robotica.Avatars
 		public string PathToFrustumPrefab = "Prefabs/Frustum";
 		[HideInInspector]
 		public Vector3 FrustumScale = new Vector3(75, 50, 100);
-		[HideInInspector]
-		public bool focusHasChanged;
 
 		// script reference
 		private Manager_EyeGaze _eyeGaze;
@@ -55,29 +53,50 @@ namespace com.VR_Robotica.Avatars
 		{
 			createFrustum();
 			setupFrustum();
-			Start_CycleFocus();
+			Start_ObjectsCycle();
 		}
 
 		private void Update()
 		{
 			trimInactiveObjects();
+
+			if(CurrentObject != null)
+			{
+				if(!checkLineOfSight(CurrentObject))
+				{
+					ChangeObjectOfFocus();
+				}
+			}
 		}
 
 		private void trimInactiveObjects()
 		{
+			// this is a back up function to clean up any inactive elements in the lists
 			ObjectsOfInterest.RemoveAll(elem => !elem.activeInHierarchy);
 			PointsOfInterest.RemoveAll(elem => !elem.activeInHierarchy);
 		}
 
-		public void ChangeFocus()
+		public void ChangeObjectOfFocus()
 		{
-			CurrentObject = pickObjectFromList();
+			if (ShowDebugLog) { Debug.Log("Changing Objects Of Focus"); }
+
+			if (ObjectsOfInterest != null && ObjectsOfInterest.Count > 0)
+			{
+				CurrentObject = pickObjectFromList();
+			}
+			else
+			{
+				CurrentObject = null;
+			}
+			
+			// each object change will initiate a reset of points list
+			// clearing out its values
 			resetPointsOfInterest();
 		}
 
 		private GameObject pickObjectFromList()
 		{
-			if (ShowDebugLog) { Debug.Log("Controller_Interest: Picking Object From List"); }
+			if (ShowDebugLog) { Debug.Log("Picking Object From List"); }
 
 			if (ObjectsOfInterest != null && ObjectsOfInterest.Count > 0)
 			{
@@ -86,7 +105,6 @@ namespace com.VR_Robotica.Avatars
 				// Visibility Check
 				if (checkLineOfSight(ObjectsOfInterest[randomNumber]))
 				{
-					focusHasChanged = true;
 					CurrentObject = ObjectsOfInterest[randomNumber];
 					// Line of sight is clear, pass the new object
 					return ObjectsOfInterest[randomNumber];
@@ -102,6 +120,64 @@ namespace com.VR_Robotica.Avatars
 			{
 				return null;
 			}
+		}
+
+		public void ChangePointOfFocus()
+		{
+			if (ShowDebugLog) { Debug.Log("Changing Points Of Focus"); }
+			if (PointsOfInterest != null && PointsOfInterest.Count > 0)
+			{
+				float randomNumber = UnityEngine.Random.Range(0f, 100f);
+				// define equal chance percentages for each point of interest
+				float percentage = 100 / PointsOfInterest.Count;
+
+				for (int i = 0; i < PointsOfInterest.Count; i++)
+				{
+					// pick points within each percentage range 
+					// example: if 10 points exist, 
+					// to choose [0] the random range must fall between 0% & 10% 
+					// aka (0 * percentage) = 0 AND (1 * percentage) = 10;
+					if (randomNumber > (i * percentage) && randomNumber < ((i + 1) * percentage))
+					{
+						CurrentlyLookingAt = PointsOfInterest[i];
+					}
+				}
+			}
+		}
+
+		private void resetPointsOfInterest()
+		{
+			if (ShowDebugLog) { Debug.Log("Reseting Points Of Interest"); }
+
+			// stop coroutine
+			Stop_PointsCycle();
+			// clear list
+			PointsOfInterest.Clear();
+			PointsOfInterest = new List<GameObject>();
+
+			if (CurrentObject != null)
+			{
+				// get list reference from new object
+				Object_OfInterest ooi = CurrentObject.GetComponent<Object_OfInterest>();
+				// IF there is an object of interest, add its points values to list 
+				if (ooi != null && ooi.PointsOfInterest.Length > 0)
+				{
+					for (int i = 0; i < ooi.PointsOfInterest.Length; i++)
+					{
+						PointsOfInterest.Add(ooi.PointsOfInterest[i].gameObject);
+					}
+				}
+				// start coroutine again
+				Start_PointsCycle();
+			}
+		}
+
+		// externally trigger a temporary interuption of the avatar's focus
+		public void InteruptCycle(GameObject newObject)
+		{
+			if (ShowDebugLog) { Debug.Log("Interupting Cycle"); }
+			CurrentObject = newObject;
+			resetPointsOfInterest();
 		}
 
 		private bool checkLineOfSight(GameObject target)
@@ -131,69 +207,33 @@ namespace com.VR_Robotica.Avatars
 
 		
 
-		#region COROUTINE HANDLERS
-
-		#region EVENT - Focus Change
-		private void resetPointsOfInterest()
-		{
-			if (ShowDebugLog) { Debug.Log("Object Focus Changed"); }
-
-			// stop coroutine
-			Stop_PointsCycle();
-			// clear list
-			PointsOfInterest = new List<GameObject>();
-			// get list reference from new object
-			Object_OfInterest ooi = CurrentObject.GetComponent<Object_OfInterest>();
-			// add values to list from object refference
-			if (ooi != null && ooi.PointsOfInterest.Length > 0)
-			{
-				for (int i = 0; i < ooi.PointsOfInterest.Length; i++)
-				{
-					PointsOfInterest.Add(ooi.PointsOfInterest[i].gameObject);
-				}
-			}
-			// start coroutine again
-			Start_PointsCycle();
-			// finish off the event
-			focusHasChanged = false;
-		}
-		#endregion
-		
+	#region COROUTINE HANDLERS
 		#region CYCLE OBJECT FOCUS
 		// Cycle through the list of objects that are in the area of interest
-		public void Start_CycleFocus()
+		public void Start_ObjectsCycle()
 		{
-			Stop_CycleFocus();
-			cycleObjectFocus_Container = cycleObjectFocus();
-			StartCoroutine(cycleObjectFocus_Container);
+			Stop_ObjectsCycle();
+			objectsCycle_container = objectsCycle();
+			StartCoroutine(objectsCycle_container);
 		}
 
-		public void Stop_CycleFocus()
+		public void Stop_ObjectsCycle()
 		{
-			if (cycleObjectFocus_Container != null)
+			if (objectsCycle_container != null)
 			{
-				StopCoroutine(cycleObjectFocus_Container);
-				cycleObjectFocus_Container = null;
+				StopCoroutine(objectsCycle_container);
+				objectsCycle_container = null;
 			}
 		}
 
-		private IEnumerator cycleObjectFocus_Container;
-		private IEnumerator cycleObjectFocus()
+		private IEnumerator objectsCycle_container;
+		private IEnumerator objectsCycle()
 		{
 			if (ShowDebugLog) { Debug.Log("Controller_Interest: Cycle Focus STARTED"); }
 
 			while (true)
 			{
-				// check to see if anything is in the list
-				if (ObjectsOfInterest.Count > 0)
-				{
-					ChangeFocus();
-				}
-				else
-				{
-					// else, You're NOT looking at anything
-					InteruptCycles(null);
-				}
+				ChangeObjectOfFocus();
 
 				// wait a 'natural' random amount of time...
 				yield return new WaitForSeconds(UnityEngine.Random.Range(5.0f, 12.0f));
@@ -222,53 +262,16 @@ namespace com.VR_Robotica.Avatars
 		private IEnumerator cyclePointsFocus_container;
 		private IEnumerator cyclePointsFocus()
 		{
+			if (ShowDebugLog) { Debug.Log("Control_FocusOfInterest: CycleThroughFaceObjects STARTED"); }
+
 			while (true)
 			{
-				if (ShowDebugLog) { Debug.Log("Control_FocusOfInterest: CycleThroughFaceObjects STARTED"); }
-
-				if (PointsOfInterest != null && PointsOfInterest.Count > 0)
-				{
-					float randomNumber = UnityEngine.Random.Range(0f, 100f);
-					float percentage = 100 / PointsOfInterest.Count;
-
-					for (int i = 0; i < PointsOfInterest.Count; i++)
-					{
-						if (randomNumber > (i * percentage) && randomNumber < ((i + 1) * percentage))
-						{
-							CurrentlyLookingAt = PointsOfInterest[i];
-							yield return new WaitForSeconds(UnityEngine.Random.Range(2.0f, 5.0f));
-						}
-					}
-				}
-				else
-				{
-					CurrentlyLookingAt = null;
-					yield return null;
-				}
+				ChangePointOfFocus();
+				yield return new WaitForSeconds(UnityEngine.Random.Range(1.0f, 4.0f));
 			}
 		}
 		#endregion
-
-		#region INTERUPT CYCLE
-		// externally trigger a temporary interuption of the avatar's focus
-		public void InteruptCycles(GameObject newObject)
-		{
-			Debug.Log("Interupting Cycle");
-			if (newObject != null)
-			{
-				// interupt the cycle by stopping them
-				Stop_CycleFocus(); 
-				Stop_PointsCycle();
-				// now look at the new object
-				CurrentObject = newObject;
-				resetPointsOfInterest();
-				// and restart the basic cycle again
-				Start_CycleFocus();
-			}
-		}
-		#endregion
-
-		#endregion
+	#endregion
 
 		#region CREATE FRUSTUM
 		private void createFrustum()

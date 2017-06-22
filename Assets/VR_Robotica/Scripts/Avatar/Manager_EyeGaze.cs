@@ -14,10 +14,15 @@ namespace com.VR_Robotica.Avatars
 	public class Manager_EyeGaze : MonoBehaviour
 	{
 		public Transform ForwardReferencePoint;
-		public GameObject[] Eyes;
+		public Transform[] Eyes;
+		
+		/* Since eyes don't follow objects that exit the frustum, the frustum itself
+		 * is a better limiter for the eye rotation
+		 * 
 		public float[] XRotationInOut = { -45.0f, 45.0f };
 		public float[] YRotationUpDown = { -30.0f, 50.0f };
 		public float[] ZRotationMinMax = {  90.0f, 90.0f };
+		*/
 
 		// Controls the interest lists of the avatar's potential gaze
 		private Controller_Interest _interestController;
@@ -64,26 +69,24 @@ namespace com.VR_Robotica.Avatars
 			if (_interestController.CurrentlyLookingAt != null)
 			{
 				targetPosition = _interestController.CurrentlyLookingAt.transform.position;
+				// ...pass the target position to Control_Focus script
+				_focusControllerScript.moveTo(targetPosition, Random.Range(10.0f, 20.0f));
 			}
 			else
 			{
-				// if there is NO target, gaze off into the distance...
-				targetPosition = ForwardReferencePoint.forward;
+				_focusControllerScript.GotoDefaultPosition();
 			}
-
-			// ...pass the target position to Control_Focus script
-			_focusControllerScript.moveTo(targetPosition, 5.0f);
 		}
 
 		private void update_EyeRotations()
 		{
 			for (int i = 0; i < Eyes.Length; i++)
 			{
-				Eyes[i].transform.LookAt(_focusControlTransform);
+				Eyes[i].LookAt(_focusControlTransform);
 
 				LimitRotations();
 				Debug.DrawRay(ForwardReferencePoint.position, ForwardReferencePoint.forward, Color.blue);
-				Debug.DrawLine(Eyes[i].transform.position, _focusControlTransform.position, Color.red);
+				Debug.DrawLine(Eyes[i].position, _focusControlTransform.position, Color.red);
 			}
 		}
 
@@ -101,9 +104,9 @@ namespace com.VR_Robotica.Avatars
 			{
 				while (true)
 				{
-					_currentRotationValue = Eyes[0].transform.localEulerAngles.x;
+					_currentRotationValue = Eyes[0].localEulerAngles.x;
 
-					if (Mathf.Abs(_currentRotationValue - _previousRotationValue) > 5.0f)
+					if (Mathf.Abs(_currentRotationValue - _previousRotationValue) > 20.0f)
 					{
 						yield return _eyeBlink.SingleBlink();
 					}

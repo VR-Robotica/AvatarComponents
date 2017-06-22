@@ -1,10 +1,8 @@
 ﻿using UnityEngine;
 
 /// <summary>
-/// This script simply adds and removes potential ObjectsOfInterest from the FocusOfInterest Script
+/// This script simply adds and removes potential ObjectsOfInterest from the Controller_Interest Script
 /// when objects enter or exit the collision area of the Frustum Collider Geometry
-/// 
-/// This is currently dependent on the Controller_Interest script.
 /// </summary>
 
 namespace com.VR_Robotica.Avatars
@@ -55,7 +53,7 @@ namespace com.VR_Robotica.Avatars
 						// add game object to primary list
 						InterestController.ObjectsOfInterest.Add(col.gameObject);
 						// interupt cycle
-						InterestController.InteruptCycles(col.gameObject);
+						InterestController.InteruptCycle(col.gameObject);
 					}
 				}
 			}
@@ -76,16 +74,16 @@ namespace com.VR_Robotica.Avatars
 
 				if (ooi != null)
 				{
-					// check if the object exiting is the current object being looked at
-					// if so, clear everything...
+					// IF the object exiting is the CURRENT OBJECT being looked at
+					// clear everything...
 					if (ooi.gameObject == InterestController.CurrentObject)
 					{
-						InterestController.PointsOfInterest.Clear();
 						InterestController.CurrentlyLookingAt	= null;
 						InterestController.CurrentObject		= null;
 					}
 					// remove object from list
 					InterestController.ObjectsOfInterest.Remove(col.gameObject);
+					InterestController.ChangeObjectOfFocus();
 				}
 			}
 		}

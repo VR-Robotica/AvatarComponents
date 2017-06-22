@@ -47,13 +47,13 @@ namespace com.VR_Robotica.Avatars
 					{
 						// 18% Chance of DOUBLE BLINK
 						yield return SingleBlink();
-						yield return new WaitForSeconds(0.25f);
+						yield return new WaitForSeconds(0.35f);
 						yield return SingleBlink();
 					}
 				}
 
 				//Activate blink again in a random range of 2 to 15 seconds for a *natural* look
-				yield return new WaitForSeconds(Random.Range(1.0f, 8.0f));
+				yield return new WaitForSeconds(Random.Range(2.0f, 15.0f));
 			}
 		}
 
@@ -66,12 +66,12 @@ namespace com.VR_Robotica.Avatars
 				_isBlinking = true;
 
 				// wait for a moment while closed
-				yield return new WaitForSeconds(0.1f);
+				yield return new WaitForSeconds(0.25f);
 
 				// now open *mostly*
 				adjustEyelids(15);
 
-				yield return new WaitForSeconds(0.05f);
+				yield return new WaitForSeconds(0.1f);
 
 				// open completely!
 				adjustEyelids(0);

@@ -11,7 +11,7 @@ namespace com.VR_Robotica.Avatars
 	/// </summary>
 	public class Object_OfInterest : MonoBehaviour
 	{
-		[Tooltip("Toggle AUTOMATICALLY populate PointsOfInterest with all the children of this object")]
+		[Tooltip("Toggle to AUTOMATICALLY populate PointsOfInterest with all the children of this object")]
 		public bool UseAllChildren;
 		[Tooltip("Define Specific Areas of an object that an avatar can cycle through and look at.")]
 		public Transform[] PointsOfInterest;
