@@ -49,6 +49,14 @@ namespace com.VR_Robotica.Avatars
 			if(_isReady)
 			{
 				update_TargetPosition();
+			//	update_EyeRotations();
+			}
+		}
+
+		private void LateUpdate()
+		{
+			if (_isReady)
+			{
 				update_EyeRotations();
 			}
 		}

@@ -59,10 +59,13 @@ namespace com.VR_Robotica.Avatars
 		private void Update()
 		{
 			trimInactiveObjects();
+		}
 
-			if(CurrentObject != null)
+		private void LateUpdate()
+		{
+			if (CurrentObject != null)
 			{
-				if(!checkLineOfSight(CurrentObject))
+				if (!checkLineOfSight(CurrentObject))
 				{
 					ChangeObjectOfFocus();
 				}
