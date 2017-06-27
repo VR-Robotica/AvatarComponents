@@ -1,6 +1,4 @@
-﻿using com.VR_Robotica;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -100,13 +98,17 @@ namespace com.VR_Robotica.Avatars
 		{
 			if (_eyeBlink != null)
 			{
+				// coroutine runs a continuous check...
 				while (true)
 				{
 					_currentRotationValue = Eyes[0].localEulerAngles.x;
-
-					if (Mathf.Abs(_currentRotationValue - _previousRotationValue) > 50.0f)
+					// checking if the eye rotates a significant amount
+					if (Mathf.Abs(_currentRotationValue - _previousRotationValue) > 20.0f)
 					{
+						// then trigger blink
 						yield return _eyeBlink.SingleBlink();
+						// delay the next trigger attempt
+						yield return new WaitForSeconds(2.0f);
 					}
 
 					yield return new WaitForEndOfFrame();
