@@ -18,6 +18,7 @@ $RECYCLE.BIN/
 *.lnk
 
 # Unity Folders & Files
+*.meta
 Temp/
 Obj/
 UnityGenerated/
@@ -65,5 +66,4 @@ ExportedObj/
 Network Trash Folder
 Temporary Items
 .apdisk
-Assets/Tests/
-Assets/Tests.meta
+
