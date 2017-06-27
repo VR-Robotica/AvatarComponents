@@ -24,7 +24,7 @@ Obj/
 UnityGenerated/
 Library/
 Assets/AssetStoreTools*
-Assets/Test/
+Assets/Tests/
 
 # Visual Studio / MonoDevelop
 ExportedObj/
