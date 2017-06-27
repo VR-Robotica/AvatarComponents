@@ -1,5 +1,5 @@
 # AvatarComponents
-A continued "Work In Progress" of Avatar Components for Unity. 
+A continued "Work In Progress" of Avatar Components for Unity. It's not perfect, but it's getting there. :-D
 <br>
 <br>
 <h2>Manager_EyeGaze</h2> a "Simulated Eye Tracking" library built for Unity<br>
