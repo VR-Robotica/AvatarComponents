@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SpinAndRotateObject : MonoBehaviour
@@ -10,27 +9,33 @@ public class SpinAndRotateObject : MonoBehaviour
 	private void Awake()
 	{
 		childObject = this.transform.GetChild(0).gameObject;
-		Debug.Log(childObject.name);
 	}
 
 	// Use this for initialization
 	void Start ()
 	{
-		
+		StartCoroutine(spinAndRotate());		
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
-		// main rotation
-//		this.transform.Rotate(Vector3.right * Time.deltaTime * Speed);
-		this.transform.Rotate(Vector3.up * Time.deltaTime * Speed, Space.World);
+	}
 
-		// object rotation
-		if (childObject != null)
+	private IEnumerator spinAndRotate()
+	{
+		while (true)
 		{
-			childObject.transform.Rotate(Vector3.right * Time.deltaTime * Speed);
-			childObject.transform.Rotate(Vector3.up * Time.deltaTime * Speed);
+			// main rotation
+			this.transform.Rotate(Vector3.up * Time.deltaTime * Speed, Space.World);
+
+			// object rotation
+			if (childObject != null)
+			{
+				childObject.transform.Rotate(Vector3.right  * Time.deltaTime * Speed);
+				childObject.transform.Rotate(Vector3.up		* Time.deltaTime * Speed);
+			}
+			yield return null;
 		}
 	}
 }

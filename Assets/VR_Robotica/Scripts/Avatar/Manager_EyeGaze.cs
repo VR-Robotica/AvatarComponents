@@ -11,8 +11,9 @@ namespace com.VR_Robotica.Avatars
 {
 	public class Manager_EyeGaze : MonoBehaviour
 	{
-		public Transform FacingForwardReference;
+		public GameObject FacingForwardReference;
 		public Transform[] Eyes;
+		public Vector3 FrustumPosition;
 
 		// Controls the interest lists of the avatar's potential gaze
 		private Controller_Interest _interestController;
@@ -47,7 +48,7 @@ namespace com.VR_Robotica.Avatars
 			if(_isReady)
 			{
 				update_TargetPosition();
-			//	update_EyeRotations();
+				update_DrawDebugRays();
 			}
 		}
 
@@ -57,6 +58,12 @@ namespace com.VR_Robotica.Avatars
 			{
 				update_EyeRotations();
 			}
+		}
+
+		private void OnDrawGizmosSelected()
+		{
+			Gizmos.color = Color.blue;
+			Gizmos.DrawCube(FacingForwardReference.transform.position + FrustumPosition, new Vector3(0.01f, 0.01f, 0.01f));
 		}
 
 		private void update_TargetPosition()
@@ -73,10 +80,8 @@ namespace com.VR_Robotica.Avatars
 			else
 			{
 				// use a default position
-				targetPosition = FacingForwardReference.TransformPoint(new Vector3(0, 0, 10));
+				targetPosition = FacingForwardReference.transform.TransformPoint(new Vector3(0, 0, 10));
 				_focusControllerScript.moveTo(targetPosition, 5.0f);
-
-				//_focusControllerScript.GotoDefaultPosition();
 			}
 		}
 
@@ -85,9 +90,23 @@ namespace com.VR_Robotica.Avatars
 			for (int i = 0; i < Eyes.Length; i++)
 			{
 				Eyes[i].LookAt(_focusControlTransform);
+			}
+		}
 
-				Debug.DrawRay(FacingForwardReference.position, FacingForwardReference.forward, Color.blue);
-				Debug.DrawLine(Eyes[i].position, _focusControlTransform.position, Color.red);
+		private void update_DrawDebugRays()
+		{
+			for (int i = 0; i < Eyes.Length; i++)
+			{
+				Debug.DrawRay(FacingForwardReference.transform.position,
+							FacingForwardReference.transform.forward,
+							Color.blue
+							);
+				Debug.DrawLine(Eyes[i].position,
+							_focusControlTransform.position,
+							Color.red
+							);
+
+			//	Debug.Log("Ref: " + FacingForwardReference.transform.position + " Eye: " + Eyes[0].position);
 			}
 		}
 
@@ -125,13 +144,18 @@ namespace com.VR_Robotica.Avatars
 		{
 			getAvatarEyes();
 			_eyeBlink = this.gameObject.GetComponent<Controller_EyeBlink>();
-			createFocusController();
-			createInterestController();
 
+			createFocusController();
 			// wait for the focus controller to finish
 			yield return _focusControllerScript.Create();
 			// get reference to focus control object
 			_focusControlTransform = _focusControllerScript.controller.transform;
+
+			createInterestController();
+			// set variable(s)
+			_interestController.FrustumOffSet = FrustumPosition;
+			// wait for intialization
+			yield return _interestController.Create();
 
 			_isReady = true;
 		}

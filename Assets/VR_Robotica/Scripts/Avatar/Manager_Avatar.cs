@@ -11,22 +11,24 @@ namespace com.VR_Robotica.Avatars
 	public class Manager_Avatar : MonoBehaviour
 	{
 		public bool LocalPlayer;
-		[Header("Avatar Anatomy")]
 		[Space]
-		[Header("Eye Blink")]
-		public GameObject HeadMesh;
-		public int[] eyelidBlendshapeTop;
-		public int[] eyelidBlendshapeBot;
-		[Header("Eye Gaze")]
-		public Transform[] Eyes;
-		[Header("IK Refs")]
-		public Transform LeftHand;
-		public Transform RightHand;
-		public Transform LeftFoot;
-		public Transform RightFoot;
 
-		private AudioListener	_audioListener;
-		private AudioSource		_audioSource;
+		[Header("Eye Gaze")]
+		public bool AddEyeGaze;
+		public GameObject HeadJoint;
+		public Transform[] Eyes;
+
+		[Header("Eye Blink")]
+		public bool			AddEyeBlink;
+
+		public enum EyeType { Three_Dimensions };
+		public EyeType		AvatarEyeType = EyeType.Three_Dimensions;
+
+		public GameObject	HeadMesh;
+		public int[]		eyelidBlendshapeTop;
+		public int[]		eyelidBlendshapeBot;
+
+		
 
 		// Use this for initialization
 		void Start()
@@ -42,37 +44,35 @@ namespace com.VR_Robotica.Avatars
 
 		private IEnumerator setup()
 		{
+			/*
 			checkForRequiredComponents();
+			if(AddEyeBlink)
+			{
+				addEyeBlink();
+			}
+
+			if(AddSimulatedEyeGaze)
+			{
+				addEyeGaze();
+			}
+			*/
 			yield return null;
 		}
 
 		private void checkForRequiredComponents()
 		{
-			#region AUDIO LISTENER
-
-			if (LocalPlayer)
-			{
-				_audioListener = this.gameObject.GetComponent<AudioListener>();
-
-				if (_audioListener == null)
-				{
-					_audioListener = this.gameObject.AddComponent<AudioListener>();
-				}
-			}
-
-			#endregion
-
-			#region AUDIO SOURCE
-
-			_audioSource = this.gameObject.GetComponent<AudioSource>();
-
-			if(_audioSource == null)
-			{
-				_audioSource = this.gameObject.AddComponent<AudioSource>();
-			}
-
-			#endregion
+			
 		}
-		
+
+		private void addEyeBlink()
+		{
+
+		}
+
+		private void addEyeGaze()
+		{
+
+		}
+
 	}
 }

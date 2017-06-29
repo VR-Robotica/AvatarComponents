@@ -11,13 +11,25 @@ namespace com.VR_Robotica.Avatars
 		private Texture2D logo;
 		private Manager_Avatar avatarManager;
 
+		// Eye Gaze
+		public bool AddEyeGaze;
+		private GameObject forwardReference;
+		private Transform LeftEye;
+		private Transform RightEye;
+
+		// Eye Blink
+		public bool AddEyeBlink;
+		public enum EyeType { Three_Dimensions };
+		public EyeType AvatarEyeType = EyeType.Three_Dimensions;
+
 		private string[] blendshapes;
 		private int topLeft		= 0;
 		private int topRight	= 0;
 		private int botLeft		= 0;
 		private int botRight	= 0;
 
-
+		// GUI HAck
+		private string separator = "_______________________________________________________________________________________";
 
 		private void OnEnable()
 		{
@@ -38,8 +50,14 @@ namespace com.VR_Robotica.Avatars
 
 			createLogo();
 			createTitle();
+
+			AddEyeGaze = EditorGUILayout.Toggle("Add Simulated Eye Gaze:", AddEyeGaze);
+			AddEyeBlink = EditorGUILayout.Toggle("Add Eye Blink Control:", AddEyeBlink);
+
+			EditorGUI.BeginChangeCheck();
 			createGazeManager();
 			createEyeBlink();
+			EditorGUI.EndChangeCheck();
 		}
 
 		private void createLogo()
@@ -51,44 +69,63 @@ namespace com.VR_Robotica.Avatars
 		private void createTitle()
 		{
 			// Custom Inspector Title Information
-			EditorGUILayout.LabelField("VRR Avatar Manager");
+			EditorGUILayout.LabelField("VRR Avatar Components ver 0.1");
+
 			EditorGUILayout.Space();
 		}
 
 		private void createGazeManager()
 		{
-			EditorGUILayout.LabelField("Eye Gaze Dependencies");
 			EditorGUILayout.Space();
+
+			
+
+			if (AddEyeGaze)
+			{
+				avatarManager.AddEyeGaze = AddEyeGaze;
+
+				EditorGUILayout.Space();
+				avatarManager.HeadJoint = EditorGUILayout.ObjectField("Head:", avatarManager.HeadJoint, typeof(GameObject), true) as GameObject;
+
+				EditorGUILayout.Space();
+				avatarManager.Eyes = new Transform[2];
+				avatarManager.Eyes[0] = EditorGUILayout.ObjectField("Left Eye:", avatarManager.Eyes[0],  typeof(Transform), true) as Transform;
+				avatarManager.Eyes[1] = EditorGUILayout.ObjectField("Right Eye:", avatarManager.Eyes[1], typeof(Transform), true) as Transform;
+			}
+
+			EditorGUILayout.LabelField(separator);
 		}
 
 		private void createEyeBlink()
 		{
-			EditorGUILayout.LabelField("Eye Blink Dependencies");
 			EditorGUILayout.Space();
 
-			avatarManager.HeadMesh = EditorGUILayout.ObjectField("Head Mesh:", avatarManager.HeadMesh, typeof(GameObject), true) as GameObject;
-
-			if (avatarManager.HeadMesh != null)
+			if (AddEyeBlink)
 			{
-				getBlendshapes();
-				
-				// Start Watching for Changes...
-				EditorGUI.BeginChangeCheck();
-				//number  = EditorGUILayout.Popup("Blend System", number, blendSystemNames.ToArray(), GUIStyle.none);
-				topLeft  = EditorGUILayout.Popup("Eyelid Top-Left: ",  topLeft,  blendshapes);
-				topRight = EditorGUILayout.Popup("Eyelid Top-Right: ", topRight, blendshapes);
-				botLeft  = EditorGUILayout.Popup("Eyelid Bot-Left: ",  botLeft,  blendshapes);
-				botRight = EditorGUILayout.Popup("Eyelid bot_Right: ", botRight, blendshapes);
+				EditorGUILayout.Space();
 
-				EditorGUI.EndChangeCheck();
-			}
-			else
-			{
+				avatarManager.AddEyeBlink	= AddEyeBlink;
+				avatarManager.HeadMesh		= EditorGUILayout.ObjectField("Animate This Mesh:", avatarManager.HeadMesh, typeof(GameObject), true) as GameObject;
 
+				EditorGUILayout.Space();
+
+				if (avatarManager.HeadMesh != null)
+				{
+					EditorGUILayout.LabelField("Blendshapes:");
+					getBlendshapeNames();
+
+					//number  = EditorGUILayout.Popup("Blend System", number, blendSystemNames.ToArray(), GUIStyle.none);
+					topLeft  = EditorGUILayout.Popup("- Eyelid Top-Left: ",  topLeft,  blendshapes);
+					topRight = EditorGUILayout.Popup("- Eyelid Top-Right: ", topRight, blendshapes);
+					botLeft  = EditorGUILayout.Popup("- Eyelid Bot-Left: ",  botLeft,  blendshapes);
+					botRight = EditorGUILayout.Popup("- Eyelid bot_Right: ", botRight, blendshapes);
+				}
 			}
+
+			EditorGUILayout.LabelField(separator);
 		}
 
-		private void getBlendshapes()
+		private void getBlendshapeNames()
 		{
 			SkinnedMeshRenderer headMesh = avatarManager.HeadMesh.GetComponent<SkinnedMeshRenderer>();
 			blendshapes = new string[headMesh.sharedMesh.blendShapeCount];

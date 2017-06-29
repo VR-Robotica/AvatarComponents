@@ -15,13 +15,13 @@ namespace com.VR_Robotica.Avatars
 		[Space]
 		public bool ShowDebugLog;
 
-		private bool _isReady;
+		private bool  _isReady;
 
 		private void Start()
 		{
 			getReferences();
 		}
-		
+
 		private void getReferences()
 		{
 			if (InterestController == null)
