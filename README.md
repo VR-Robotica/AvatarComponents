@@ -9,7 +9,7 @@ A continued "Work In Progress" of Avatar Components for Unity. It's not perfect,
 <br>
 <h2>version (0.1) </h2>
 <br>
-Eye contact is a subtle, yet powerful
+Eye contact is a subtle, yet powerful effect.
 <br>
 Tired of characters and avatars with that dead look in their eyes? Well look no further, here is a simple library of Unity scripts that bring life to the eyes of your characters. Add a simple component to objects that are "interesting" and designate their most interesting points, and the character will <b>not</b> simply stare at them, but continuosly scan them from point-to-point as if they were actually interested in them.
 <br>
