@@ -1,10 +1,9 @@
 # AvatarComponents
 <br>
-A continued "Work In Progress" of Avatar Components for Unity. It's not perfect, but it's getting there. :-D  Starting with the first Module:
+A continued "Work In Progress" of Avatar Components for Unity.
 <br>
-<h2>Simulated Eye Tracking - version 0.1 </h2> 
-<br>
-<p>What started a prototype for [BigscreenVR](http://www.bigscreenvr.com) has slowly grown and refined for broader use cases and capabilities. Just add the Manager_EyeGaze component to your character.</p>
+The first library component:
+<h2>Simulated Eye Gaze - version 0.1 </h2> 
 <br>
 
 [![Watch the video](http://i3.ytimg.com/vi/nBdPiYsCH9w/maxresdefault.jpg)](https://youtu.be/nBdPiYsCH9w)
@@ -12,20 +11,16 @@ A continued "Work In Progress" of Avatar Components for Unity. It's not perfect,
 <br>
 Eye contact is a subtle, yet powerful effect.
 <br>
-If you're tired of characters and avatars with that dead look in their eyes, look no further! Here is a simple library of Unity scripts that bring life to the eyes of your characters. Add a simple component to objects that are "interesting" and designate their most interesting points, and the character will <b>not</b> simply stare at them, but continuosly scan them from point-to-point as if they were actually interested in them.
-<br>
-# Read more about the importance of eye gaze
-<br>
-
-[Realistic Emotional Gaze and Head Behavior](https://link.springer.com/chapter/10.1007%2F978-3-642-16958-8_26)
-
-<br>
-
-[Eyes Alive](https://www.cis.upenn.edu/~badler/papers/EyesAlive.pdf)
-
-<br>
-
-[Realistic Avatar Eye and Head Animation Using aNeurobiological Model of Visual Attention](http://ilab.usc.edu/publications/doc/Itti_etal03spienn.pdf)
-
+<p> 
+If you're tired of characters and avatars that have that dead look in their eyes, look no further! What started as a set of experiments for <a href="http://www.vrchat.net">VR Chat</a> and later as a prototype for <a href="http://www.bigscreenvr.com">BigscreenVR</a>, this library has slowly grown and been refined for broader use cases and capabilities. This is a simple library of Unity scripts that bring life to the eyes of your characters. With ver 0.1, simply add the <b>Manager_EyeGaze</b> to your character and fill the basic properties, then add the <b>Object_OfInterest</b> script to any object that you want the character to be able to look at, and you're ready to go. The character will <b>not</b> simply stare at them, but continuosly scan them from point-to-point as if they were actually interested in them.
+</p>
 <br>
 <br>
+
+### Read more about the importance of eye gaze
+<p><a href="https://www.cis.upenn.edu/~badler/papers/EyesAlive.pdf">Eyes Alive</a></p>
+<p><a href="https://link.springer.com/chapter/10.1007%2F978-3-642-16958-8_26">Realistic Emotional Gaze and Head Behavior</a></p>
+<p><a href="http://ilab.usc.edu/publications/doc/Itti_etal03spienn.pdf">Realistic Avatar Eye and Head Animation Using aNeurobiological Model of Visual Attention</a></p>
+<br>
+<br>
+More Avatar related features to be added in the near future...
