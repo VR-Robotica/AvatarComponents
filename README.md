@@ -1,20 +1,23 @@
-# AvatarComponents
-<br>
-<p align="justify"> 
-A continued "Work In Progress" of Avatar Components for Unity.
+<p align="center">
+  <h1>AvatarComponents</h1>
+  A continued "Work In Progress" of Avatar Components for Unity.
 </p>
 <br>
-<br>
 
-## The first library components for version 0.1:
-
-### 3D Simulated Eye Gaze & 3D Eye Blink Animation
-
-[![Watch the video](http://i3.ytimg.com/vi/nBdPiYsCH9w/maxresdefault.jpg)](https://youtu.be/nBdPiYsCH9w)
-
-<br>
+<p>
+  <h2>The first library components for version 0.1:</h2>
+</p>
+<p>
+  <h3>3D Simulated Eye Gaze & 3D Eye Blink Animation</h3>
+</p>
+<p align="center">
+  <a href="https://youtu.be/nBdPiYsCH9w"><img src="http://i3.ytimg.com/vi/nBdPiYsCH9w/maxresdefault.jpg" title="Watch YouTube Video" width="480" height="256"></a>
+</p>
+<p align="center">
+  <a href="https://youtu.be/8taVMHbVdeI"><img src="http://i3.ytimg.com/vi/8taVMHbVdeI/maxresdefault.jpg" title="Watch YouTube Video" width="480" height="256"></a>
+</p>
 <p align="justify"> 
-Eye contact is a subtle, yet powerful effect.
+  Eye contact is a subtle, yet powerful effect.
 </p>
 <br>
 <p align="justify"> 
@@ -24,9 +27,9 @@ If you're tired of characters and avatars that have that dead look in their eyes
 
 ### Read more about the importance of eye gaze
 <p>
-<li><a href="https://www.cis.upenn.edu/~badler/papers/ EyesAlive.pdf">Eyes Alive</a></li>
-<li><a href="https://link.springer.com/chapter/10.1007%2F978-3-642-16958-8_26"> Realistic Emotional Gaze and Head Behavior</a></li>
-<li><a href="http://ilab.usc.edu/publications/doc/Itti_etal03spienn.pdf"> Realistic Avatar Eye and Head Animation</a></li>
+  <li><a href="https://www.cis.upenn.edu/~badler/papers/ EyesAlive.pdf">Eyes Alive</a></li>
+  <li><a href="https://link.springer.com/chapter/10.1007%2F978-3-642-16958-8_26"> Realistic Emotional Gaze and Head Behavior</a></li>
+  <li><a href="http://ilab.usc.edu/publications/doc/Itti_etal03spienn.pdf"> Realistic Avatar Eye and Head Animation</a></li>
 </p>
 <br>
 <br>
