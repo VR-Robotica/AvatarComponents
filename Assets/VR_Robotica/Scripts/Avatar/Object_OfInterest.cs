@@ -33,7 +33,9 @@ namespace com.VR_Robotica.Avatars
 			if(collider == null)
 			{
 				Debug.LogWarning("This Object Needs a Custom Collider, creating default.");
-				this.gameObject.AddComponent<BoxCollider>();
+				SphereCollider sc = this.gameObject.AddComponent<SphereCollider>();
+				sc.isTrigger = true;
+				sc.radius = 0.1f;
 			}
 		}
 
