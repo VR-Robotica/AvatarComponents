@@ -64,13 +64,15 @@ namespace com.VR_Robotica.Avatars
 				controller.GetComponent<SphereCollider>().radius = 0.01f;
 				controller.GetComponent<SphereCollider>().isTrigger = true;
 
+				/* Un Comment if you'd like to have geometry attached to the controller,
+				 * which you may like to see how the character changes its focus
+				  
 				GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 				sphere.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
 				Destroy(sphere.gameObject.GetComponent<SphereCollider>());
 				sphere.transform.parent = controller.transform;
+				*/
 
-				// add object script
-				// _controller.AddComponent<Object_OfFocus>();
 				_isReady = true;
 			}
 			else

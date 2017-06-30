@@ -28,7 +28,7 @@ namespace com.VR_Robotica.Avatars
 		private int botLeft		= 0;
 		private int botRight	= 0;
 
-		// GUI HAck
+		// GUI Hack
 		private string separator = "_______________________________________________________________________________________";
 
 		private void OnEnable()

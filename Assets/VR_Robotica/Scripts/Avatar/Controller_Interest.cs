@@ -51,15 +51,6 @@ namespace com.VR_Robotica.Avatars
 			_eyeGaze			= this.gameObject.GetComponent<Manager_EyeGaze>();			
 		}
 
-		private void Start()
-		{
-			/*
-			createFrustum();
-			setupFrustum();
-			Start_ObjectsCycle();
-			*/
-		}
-
 		private void Update()
 		{
 			trimInactiveObjects();
@@ -369,36 +360,6 @@ namespace com.VR_Robotica.Avatars
 
 			collider.sharedMesh = colliderMesh;
 		}
-
-		/*
-		private void loadFrustumPrefab()
-		{
-			// check if frustum was added as a child in the editor
-			if (this.transform.childCount > 0)
-			{
-				// get child object(s) with the Object_Frustum component (should only be one)
-				Object_Frustum[] children = this.transform.GetComponentsInChildren<Object_Frustum>();
-				foreach (Object_Frustum frustum in children)
-				{
-					_frustum = frustum.gameObject;
-				}
-			}
-
-			if (_frustum == null)
-			{
-				// if a frustum has NOT been added...
-				// instantiate prefab from resource folder
-				_frustum = Instantiate(Resources.Load(PathToFrustumPrefab) as GameObject);
-
-				// if the load failed...
-				if (_frustum == null)
-				{
-					Debug.LogWarning("Frustum NOT Loaded.");
-					return;
-				}
-			}
-		}
-		*/
 
 		private void setupFrustum()
 		{
