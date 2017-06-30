@@ -11,6 +11,9 @@
   <h3>3D Simulated Eye Gaze & 3D Eye Blink Animation</h3>
 </p>
 <p align="center">
+  <a href="https://youtu.be/pkFxNp78azQ"><img src="http://i3.ytimg.com/vi/pkFxNp78azQ/maxresdefault.jpg" title="Watch YouTube Video" width="480" height="256"></a>
+</p>
+<p align="center">
   <a href="https://youtu.be/nBdPiYsCH9w"><img src="http://i3.ytimg.com/vi/nBdPiYsCH9w/maxresdefault.jpg" title="Watch YouTube Video" width="480" height="256"></a>
 </p>
 <p align="center">
