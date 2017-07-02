@@ -24,7 +24,7 @@
 </p>
 <br>
 <p align="justify"> 
-If you're tired of characters and avatars that have that dead look in their eyes, look no further! What started as a set of experiments for <a href="http://www.vrchat.net">VR Chat</a> and later as a prototype for <a href="http://www.bigscreenvr.com">BigscreenVR</a>, this library has slowly grown and been refined for broader use cases and capabilities. This is a simple library of Unity scripts that bring life to the eyes of your characters. With ver 0.1, simply add the <b>Manager_EyeGaze</b> to your character and fill the basic properties, then add the <b>Object_OfInterest</b> script to any object that you want the character to be able to look at, and you're ready to go. The character will <b>not</b> simply stare at them, but continuosly scan them from point-to-point as if they were actually interested in them.
+If you're tired of characters and avatars that have that dead look in their eyes, look no further! What started as a set of experiments during the "early days" of <a href="http://www.vrchat.net">VR Chat</a> and later as a prototype for <a href="http://www.bigscreenvr.com">BigscreenVR</a>, this library has slowly grown and been refined for broader use cases and capabilities. This is a simple library of Unity scripts that bring life to the eyes of your characters. With ver 0.1, simply add the <b>Manager_EyeGaze</b> to your character and fill the basic properties, then add the <b>Object_OfInterest</b> script to any object that you want the character to be able to look at, and you're ready to go. The character will <b>not</b> simply stare at them, but continuosly scan them from point-to-point as if they were actually interested in them.
 </p>
 <br>
 
