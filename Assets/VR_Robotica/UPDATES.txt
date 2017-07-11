@@ -1,0 +1,15 @@
+﻿ver 0.2 UPDATES
+
+- Renamed classes
+
+- Made VRR_EyeGaze_Manager the entry point
+	- All controller scripts are implemented by manager script
+
+- Added 2D Texture Capabilities with custom Shader
+	- Eye Blink can now use 2D Texture Animation
+	- Eye Gaze can now offset eye texture to simulate gaze
+
+ver 0.1 UPDATES
+
+- Migrated early Simulated Eye Gaze code to new repository
+- refactored code
