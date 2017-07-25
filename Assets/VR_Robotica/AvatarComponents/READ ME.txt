@@ -1,0 +1,81 @@
+Simple Eye Gaze 
+- by VR_Robotica
+
+Setting Up Your Avatar:
+
+
+[VRR_ObjectOfInterest]
+This is the script that you need to place on any objects you want your Avatar to look at. The object should have a collider 
+component attached to it, if it does not, the script will create a default sphere collider at the local 0,0,0 position. This 
+may not be the ideal position for your object.
+
+Any children of the object this script is attached to, can be a point of interest.
+	(ie. a point on the object that the Avatar will focus its attention on).
+
+You can simply toggle the option "Use All Children" to automatically set the children as points of interest.
+Or, you can manually add specific GameObjects to the Points of Interest list, by dragging and dropping them into the inspector.
+
+
+
+[VRR_SimpleEyeGaze]
+This is the MAIN script that will go on your Avatar.
+
+1) Drag-n-Drop the GameObject you wish to use as the Head Pivot Position. 
+- This is used as the reference point from which we will gaze at objects.
+
+2) Drag-n-Drop the GameObjects that represent the pivots for the Left and Right Eyes. 
+- For simple models you would simply use the eye object's pivot point. But, if your model is Rigged with a bone setup, 
+  then use the Bone Joints skinned to each eye.
+
+3) Align the Field Of View Frustum Position
+- This should be placed between the Avatar's eyes, and slightly in front of its nose. You do not want the frustum to 
+overlap (collide) with the Avatar's head (especially if it is marked as an object of interest). If you can not avoid 
+the overlap, and the Avatar's head is a separate object, you will need to create and add the object to a new layer 
+that is ignored by the Frustum's collider.
+
+4) Choose whether you want to animated 3D objects or 2D Textures
+
+
+
+
+If you chose 3D Objects:
+
+1) Drag-n-Drop the head mesh (or a mesh that holds the blendshapes for the eyes) to the "Mesh With Blendshapes" slot.
+
+2) For each eyelid, choose it's coressponding Blendshape from the list.
+
+And you're ready to go!
+
+
+
+
+If you chose 2D objects: (this has far more options)  ^_^
+
+1) Drag-n-Drop the GameObjects for each eye. 
+* These GameObjects must utilize the VR_Robotica/Unlit_Eye shader in their material.
+* You can set a default image texture for the eyelid in the Material 
+	- if you use a texture atlas, you will have to change the tiling property for it to look correct while in the editor
+
+2) Choose if you want to use a 4 Frame Sequence of separate images, or a 4 Frame Atlas (Horizontal or Vertical orientation)
+
+	a) If you chose "Sequence of Images" 
+		- Simply drag-n-drop each frame into their corresponding slot, starting with the 'Open' image.
+
+	b) If you chose "Texture Atlas"
+		- Simply drag-n-drop your atlas.
+
+3) Set the Tween Times for between the animated frames and the closed eye pause 
+* the default values work pretty well
+
+4) Set the Rotation Pivot Limits and Texture Offset Limits
+- Find the approriate values by:
+	a) Rotate the eye pivots to find where the Z-Axis hits the edge of the eyelid: top, bottom, inside, and out.
+	* these values should be generally equal for both eyes
+
+	b) Adjust the texture offset values along the X and Y to see where your pupils hit the eyelid edges.
+	* offsets should not go beyond 0.5
+
+- These values are used as a percentage % comparison to animate the texture offset values. So, when the eye rotates 70% of 
+its maximum limit to the outside, the texture will similarly animate 70% to its corresponding limit.
+
+And now you're ready to go!
