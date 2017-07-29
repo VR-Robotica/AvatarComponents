@@ -19,16 +19,9 @@ namespace com.VR_Robotica.AvatarComponents.Controllers
 	[RequireComponent(typeof(VRR_SimpleEyeGaze))]
 	public class VRR_Interest_Controller : MonoBehaviour
 	{
-		[Tooltip("Width, Height, Focus Distance")]
-		public Vector3 FrustumSize = new Vector3(1.0f, 0.5f, 2.5f);
-		public Vector3 FrustumOffSet; // = new Vector3(0.0f, 0.11f, 0.17f);
-		[HideInInspector]
-		public string PathToFrustumPrefab = "Prefabs/Frustum";
-		[HideInInspector]
-		public Vector3 FrustumScale = new Vector3(1, 1, 1);//(150, 100, 200);
-
 		public bool				ShowDebugLog;
-		[Space]
+        public Vector3 FrustumOffSet;
+        [Space]
 		[Header("Objects Available To Look At")]
 		public List<GameObject> ObjectsOfInterest;  // Primary
 		[Space]
@@ -274,124 +267,26 @@ namespace com.VR_Robotica.AvatarComponents.Controllers
 
 		public IEnumerator Create()
 		{
-			create();
-			yield return null;
+            if (!_isReady)
+            {
+
+                _frustum = new GameObject();
+                _frustum.transform.SetParent(_eyeGaze.FacingForwardReference);
+
+                // use a quick reference to pass the offset value
+                VRR_Frustum_Object frustumComponent = _frustum.AddComponent<VRR_Frustum_Object>();
+                frustumComponent.InterestController = this.gameObject.GetComponent<VRR_Interest_Controller>();
+                frustumComponent.FrustumOffSet = FrustumOffSet;
+                
+
+                yield return frustumComponent.Create();
+
+                Start_ObjectsCycle();
+
+                _isReady = true;
+            }
+
+            yield return null;
 		}
-
-		private void create()
-		{
-			if(!_isReady)
-			{
-				createFrustum(FrustumSize.x, FrustumSize.y, FrustumSize.z);
-				setupFrustum();
-
-				Start_ObjectsCycle();
-
-				_isReady = true;
-			}
-		}
-
-		#region CREATE FRUSTUM
-		private void createFrustum(float width, float height, float distance)
-		{
-			_frustum = new GameObject();
-
-			MeshCollider collider	= _frustum.gameObject.AddComponent<MeshCollider>();
-			collider.convex			= true;
-			collider.isTrigger		= true;
-
-			Mesh colliderMesh;
-			colliderMesh			= new Mesh();
-			colliderMesh.name		= "Frustum Mesh";
-
-			Vector3[] frustumOriginPlane = new Vector3[4];
-			frustumOriginPlane[0] = new Vector3(-width * 0.1f, height * 0.1f, 0);
-			frustumOriginPlane[1] = new Vector3(width * 0.1f, height * 0.1f, 0);
-			frustumOriginPlane[2] = new Vector3(-width * 0.1f, -height * 0.1f, 0);
-			frustumOriginPlane[3] = new Vector3(width * 0.1f, -height * 0.1f, 0);
-
-			Vector3[] frustumDistantPlane = new Vector3[4];
-			frustumDistantPlane[0] = new Vector3(-width, height, distance);
-			frustumDistantPlane[1] = new Vector3(width, height, distance);
-			frustumDistantPlane[2] = new Vector3(-width, -height, distance);
-			frustumDistantPlane[3] = new Vector3(width, -height, distance);
-
-			colliderMesh.vertices = new Vector3[] 
-			{	
-				// bottom plane
-				frustumDistantPlane[2], frustumDistantPlane[3], frustumOriginPlane[3], frustumOriginPlane[2],
-				// left plane
-				frustumOriginPlane[0], frustumDistantPlane[0], frustumDistantPlane[2], frustumOriginPlane[2],
-				// front  plane - Distant
-				frustumDistantPlane[0], frustumDistantPlane[1], frustumDistantPlane[3], frustumDistantPlane[2],
-				// back  plane - Origin
-				frustumOriginPlane[1], frustumOriginPlane[0], frustumOriginPlane[2], frustumOriginPlane[3],
-				// right plane
-				frustumDistantPlane[1], frustumOriginPlane[1], frustumOriginPlane[3], frustumDistantPlane[3],
-				// top plane
-				frustumOriginPlane[0], frustumOriginPlane[1], frustumDistantPlane[1], frustumDistantPlane[0]
-			};
-
-			colliderMesh.triangles = new int[]
-			{
-				// Bottom
-				3, 1, 0,
-				3, 2, 1,			
- 
-				// Left
-				3 + 4 * 1, 1 + 4 * 1, 0 + 4 * 1,
-				3 + 4 * 1, 2 + 4 * 1, 1 + 4 * 1,
- 
-				// Front
-				3 + 4 * 2, 1 + 4 * 2, 0 + 4 * 2,
-				3 + 4 * 2, 2 + 4 * 2, 1 + 4 * 2,
- 
-				// Back
-				3 + 4 * 3, 1 + 4 * 3, 0 + 4 * 3,
-				3 + 4 * 3, 2 + 4 * 3, 1 + 4 * 3,
- 
-				// Right
-				3 + 4 * 4, 1 + 4 * 4, 0 + 4 * 4,
-				3 + 4 * 4, 2 + 4 * 4, 1 + 4 * 4,
- 
-				// Top
-				3 + 4 * 5, 1 + 4 * 5, 0 + 4 * 5,
-				3 + 4 * 5, 2 + 4 * 5, 1 + 4 * 5,
-			};
-
-			collider.sharedMesh = colliderMesh;
-		}
-
-		private void setupFrustum()
-		{
-			if (_frustum != null)
-			{
-				_frustum.name = "Frustum";
-				_frustum.transform.parent = _eyeGaze.FacingForwardReference.transform;
-				// Set to Layer[2] = Ignore Ray Cast
-				_frustum.layer = 2;
-
-				// Align and Scale Frustum
-				_frustum.transform.localEulerAngles = Vector3.zero;
-				_frustum.transform.localScale		= FrustumScale;
-				_frustum.transform.localPosition	= FrustumOffSet;
-
-				_frustum.AddComponent<Rigidbody>();
-				_frustum.GetComponent<Rigidbody>().useGravity = false;
-				_frustum.GetComponent<Rigidbody>().mass = 0.0f;
-
-				// Add collision triggering script
-				VRR_Frustum_Object of = _frustum.GetComponent<VRR_Frustum_Object>();
-				if (of == null)
-				{
-					Debug.Log("Adding Frustum Controller");
-					of = _frustum.AddComponent<VRR_Frustum_Object>();
-				}
-
-				// setting reference
-				of.InterestController = this.gameObject.GetComponent<VRR_Interest_Controller>();
-			}
-		}
-		#endregion
 	}
 }
