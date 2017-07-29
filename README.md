@@ -65,8 +65,6 @@ If you're tired of characters and avatars that have that dead look in their eyes
 ### More Avatar related features to be added in the future, such as:
 
 <p align="justify">
-<li> 2D Simulated Eye Gaze</li>
-<li> 2D Eye Blink Animation</li>
 <li> 3D Simulated Lip Sync</li>
 <li> 2D Simulated LipSync</li>
 <li> Avatar Hand Gestures</li>
