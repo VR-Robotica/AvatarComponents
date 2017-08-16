@@ -1,8 +1,0 @@
-﻿Avatar Components
-- A Unity3D Asset by VR_Robotica Inc.
-
-
-ver 1.0
-First Release to the Unity Asset Store
-- [VRR_SimpleEyeGaze]
-	A set of scripts that bring life to the eyes of your Avatars and Non-Player Characters.
